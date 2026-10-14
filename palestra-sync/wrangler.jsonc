@@ -4,6 +4,6 @@
   "compatibility_date": "2025-10-01",
   "assets": { "directory": "./public" },
   "kv_namespaces": [
-    { "binding": "VAULT", "id": "INCOLLA_QUI_L_ID_DI_KV" }
+    { "binding": "VAULT", "id": "a0141144514d42bca6a10da2e0809d68" }
   ]
 }
