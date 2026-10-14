@@ -2,7 +2,7 @@
 
 Questa cartella contiene la versione "pulita" dell'app (parte vuota, senza lo storico di nessuno) e un piccolo server gratuito su Cloudflare che permette di usare gli stessi dati dal PC e dal telefono.
 
-- `public/index.html` è l'app.
+- `public/` contiene l'app: `index.html`, il manifest e le icone (per installarla come app), il service worker `sw.js` (funziona anche senza internet) e `vendor/` con la libreria per mostrare i PDF.
 - `src/worker.js` è il server: conserva solo dati già cifrati dal browser, quindi non può leggerli.
 - `wrangler.jsonc` è la configurazione per Cloudflare.
 
@@ -32,6 +32,23 @@ La prima volta Cloudflare ti chiede di scegliere un sottodominio `workers.dev`. 
 Apri l'indirizzo sul PC, vai in Altro → Ripristina da backup e incolla il backup: lo storico torna visibile. Poi in Altro → Sincronizzazione tocca "Genera un codice nuovo", annota il codice (è l'unica chiave: senza non puoi collegare altri dispositivi) e tocca OK.
 
 Sul telefono apri lo stesso indirizzo (dal menu del browser puoi aggiungerlo alla schermata Home), vai in Altro → Sincronizzazione, inserisci il codice e tocca "Attiva". I dati arrivano da soli. Se il secondo dispositivo aveva già dei dati, vengono uniti.
+
+
+## Installarla come app (senza barra del browser)
+
+Dopo aver aperto l'indirizzo del sito: sul PC (Brave o Chrome) compare il pulsante "Installa" nella barra dell'indirizzo; sul telefono Android usa il menu ⋮ → "Installa app" (o "Aggiungi a schermata Home"). L'app si apre in una finestra sua, senza barra degli indirizzi, e funziona anche offline. Ricorda: i dati sono per dispositivo, la sincronizzazione li allinea.
+
+## Aggiornare l'app
+
+Sostituisci i file della cartella `public/` con quelli nuovi e rilancia `npx wrangler deploy`. Alla prossima apertura online l'app si aggiorna da sola (a volte serve chiuderla e riaprirla una volta).
+
+## PDF della scheda
+
+In Altro → Schede PDF carichi il PDF con riscaldamento, serie, tips. Lo apri dal pulsante "📄 Scheda PDF" in cima alla schermata Allenamento. Il PDF resta solo sul dispositivo dove lo carichi (non si sincronizza, per non appesantire): caricalo anche sugli altri. È incluso nel file di backup.
+
+## Backup
+
+"Crea backup" scarica un file `.json` con tutto (serie, schede, pesi, impostazioni, foto, PDF); "Ripristina" accetta quel file. Non contiene la chiave di sincronizzazione.
 
 ## Come funziona
 
