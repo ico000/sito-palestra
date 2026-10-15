@@ -70,3 +70,21 @@ Serie, pesi ed esercizi personalizzati si uniscono voce per voce: se aggiungi se
 ## Accessi con account
 
 Questa versione usa un codice segreto, adatta a una persona sola. Un login con email e password (per dare l'app ad altri, ognuno con i suoi dati) è un passo successivo.
+
+## Novità: attrezzi, zavorre e storico avanzato
+
+- **Altro → Attrezzi e zavorre**: sbarre (20/15/10 kg), EZ, trap bar, Smith, macchinario con peso base, cavo singolo, doppia carrucola (×½) e tripla (×⅓). Puoi modificare i pesi e i fattori e aggiungere attrezzi tuoi.
+- Nella scheda **Registra** scegli l'attrezzo: inserisci sempre i pesi che carichi. Nello storico vedi il tuo peso con l'icona dell'attrezzo; record, 1RM, grafici e classifica usano il carico totale.
+- **Serie passate**: Attrezzi e zavorre → "Applica a serie già registrate" (con annulla) oppure "Attrezzo predefinito per esercizio".
+- Storico: tocca una serie per i dettagli; in alto scegli cosa mostrare (ripetizioni, 1RM, volume, peso massimo, durata) e l'ordinamento.
+- Foto illimitate e riordinabili (Info dell'esercizio), campo "Come farlo bene", barra A–Z, schede riordinabili col trascinamento, tasto indietro di Android.
+
+I file modificati rispetto alla versione precedente sono solo `public/index.html` e `public/sw.js` (e questo file). Se hai già messo l'id reale di KV in `wrangler.jsonc`, non sovrascriverlo.
+
+## Offline e apertura veloce
+
+- Le immagini incluse nell'app sono ora in `public/imgdata.js`: `index.html` pesa circa 320 KB invece di 3,4 MB.
+- Il service worker (`sw.js`, cache v4) apre l'app SEMPRE dalla copia salvata sul telefono, quindi parte subito anche con rete debole o assente, e scarica la versione nuova in background. Quando arriva un aggiornamento compare un avviso: chiudi e riapri l'app.
+- Per l'offline basta aprire l'app una volta con la connessione dopo ogni aggiornamento (scarica da sola tutti i file, foto comprese).
+- Quando carichi la nuova versione includi anche `public/imgdata.js`.
+- Altro → "Cardio: durata minima": sotto la soglia (predefinita 15 minuti al giorno per attività) il cardio non conta come allenamento.
