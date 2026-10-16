@@ -1,0 +1,9 @@
+{
+  "name": "palestra-tracker",
+  "main": "src/worker.js",
+  "compatibility_date": "2025-10-01",
+  "assets": { "directory": "./public" },
+  "kv_namespaces": [
+    { "binding": "VAULT", "id": "INCOLLA_QUI_L_ID_DI_KV" }
+  ]
+}
