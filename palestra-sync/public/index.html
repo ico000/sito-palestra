@@ -134,7 +134,7 @@ const W_NONE = `Non necessarie se già scaldato; basta una serie leggera se il m
 
 // Schede riutilizzate da più esercizi: c = 3 suggerimenti (partenza|intermedio|fine), e = errori comuni
 const T = {
-  bench: { c: `Scapole addotte e depresse, piedi saldi a terra, presa poco oltre le spalle|Gomiti a ~45-75° dal busto, bilanciere verso la parte bassa del petto|Spingi senza staccare i glutei dalla panca, non rimbalzare`, e: `Gomiti troppo larghi, rimbalzo sul petto, glutei sollevati` },
+  bench: { c: `Scapole addotte e depresse, piedi saldi a terra, presa poco oltre le spalle|Gomiti a ~45-60° dal busto, bilanciere verso la parte bassa del petto|Spingi senza staccare i glutei dalla panca, non rimbalzare`, e: `Gomiti troppo larghi, rimbalzo sul petto, glutei sollevati` },
   machpress: { c: `Schiena aderente, maniglie all'altezza del petto, sedile regolato|Spingi in avanti mantenendo le spalle basse|Estendi senza bloccare i gomiti, ritorno lento`, e: `Spalle in avanti, sedile troppo alto o basso` },
   pecdeck: { c: `Schiena aderente, gomiti all'altezza delle spalle|Chiudi in arco senza staccare le spalle dallo schienale|Stringi il petto, ritorno controllato senza far sbattere i pesi`, e: `Spalle spinte in avanti, carico troppo alto` },
   pushdown: { c: `Gomiti ai fianchi, avambracci a ~90°, presa su corda o V-bar|Estendi le braccia verso il basso senza muovere i gomiti|Contrai il tricipite, risalita controllata`, e: `Gomiti che si muovono, usare il peso del corpo` },
@@ -144,12 +144,12 @@ const T = {
   latraise: { c: `Busto fermo, manubri ai lati, gomiti leggermente piegati|Alza i gomiti fino all'altezza delle spalle, mano non più alta del gomito|Discesa lenta, nessuno slancio`, e: `Slancio con il busto, scrollare le spalle, carico troppo alto` },
   revfly: { c: `Petto appoggiato, maniglie a braccia quasi tese|Apri le braccia all'indietro in arco|Stringi le scapole senza scrollare le spalle, ritorno lento`, e: `Spingere con il petto staccato, slancio` },
   reardb: { c: `Busto inclinato in avanti, schiena neutra, manubri sotto di te|Apri le braccia lateralmente con gomiti leggermente flessi|Stringi le scapole, discesa lenta`, e: `Slancio, gomiti troppo flessi` },
-  squat: { c: `Bilanciere sui trapezi, piedi larghezza spalle, core attivo|Scendi con ginocchia in linea con le punte, schiena neutra|Spingi dal tallone/mesopiede ed estendi senza anteporre il bacino`, e: `Ginocchia che cedono verso l'interno, schiena che si arrotonda, tallone che si stacca` },
+  squat: { c: `Bilanciere sui trapezi, piedi larghezza spalle, core attivo|Scendi con le ginocchia che seguono la direzione delle punte (possono superarle), schiena neutra|Spingi dal tallone/mesopiede ed estendi senza anteporre il bacino`, e: `Ginocchia che cedono verso l'interno, schiena che si arrotonda, tallone che si stacca` },
   legpress: { c: `Schiena e bacino aderenti, piedi a larghezza spalle sulla pedana|Scendi finché il bacino resta aderente allo schienale|Spingi senza bloccare le ginocchia in estensione`, e: `Bacino che si stacca, ginocchia bloccate, escursione corta` },
   legcurl: { c: `Rullo sopra i talloni, bacino aderente|Fletti le ginocchia portando i talloni verso i glutei|Contrai, ritorno lento senza far sbattere il peso`, e: `Bacino che si solleva, slancio` },
-  rdl: { c: `In piedi, ginocchia morbide, bilanciere vicino alle cosce|Spingi il bacino indietro mantenendo la schiena neutra|Scendi fino a sentire i femorali in tensione, poi risali con i glutei`, e: `Schiena arrotondata, bilanciere lontano dalle gambe, piegare troppo le ginocchia` },
+  rdl: { c: `In piedi, ginocchia morbide, bilanciere vicino alle cosce|Spingi il bacino indietro mantenendo la schiena neutra|Scendi fino a sentire i femorali in tensione, poi risali con i glutei`, e: `Schiena che si arrotonda a fine corsa sotto carico, bilanciere lontano dalle gambe, piegare troppo le ginocchia` },
   calf: { c: `Punte sul bordo, talloni liberi, ginocchia quasi tese|Sali sulle punte il più in alto possibile|Pausa in alto, discesa lenta fino a stiramento`, e: `Rimbalzare, escursione corta` },
-  deadlift: { c: `Bilanciere sopra metà piede, schiena neutra, spalle sopra il bilanciere|Spingi il pavimento con le gambe tenendo il bilanciere vicino al corpo|Estendi anche e ginocchia insieme, non iperestendere la schiena`, e: `Schiena arrotondata, bilanciere lontano dal corpo, strappo iniziale` },
+  deadlift: { c: `Bilanciere sopra metà piede, schiena neutra, spalle sopra il bilanciere|Spingi il pavimento con le gambe tenendo il bilanciere vicino al corpo|Estendi anche e ginocchia insieme, non iperestendere la schiena`, e: `Schiena che si arrotonda a fine corsa sotto carico, bilanciere lontano dal corpo, strappo iniziale` },
   rowbb: { c: `Busto inclinato ~45°, schiena neutra, ginocchia morbide|Tira il bilanciere verso l'ombelico/basso addome|Contrai la schiena, discesa controllata senza cambiare inclinazione`, e: `Schiena che si arrotonda, slancio, busto che si alza` },
   rowdb: { c: `Una mano e un ginocchio sulla panca, schiena piatta|Porta il gomito verso l'anca, non verso l'alto|Fermati in contrazione, discesa lenta senza ruotare il busto`, e: `Rotazione del busto, tirare con il braccio invece che con la schiena` },
   rowmach: { c: `Petto appoggiato al supporto, braccia distese|Tira i gomiti indietro e leggermente in basso|Contrai le scapole, ritorno lento`, e: `Staccare il petto dal supporto, alzare le spalle` },
@@ -225,7 +225,7 @@ const BUILTIN = [
     `Seduto, schiena aderente, gambe aperte alla larghezza regolata|Chiudi le gambe in modo fluido|Contrai, ritorno lento senza far sbattere i pesi`, `Rimbalzare, apertura eccessiva con carico alto`),
   E('Legs', 'Barbell Calf Raise', 'Calf raise con bilanciere', 'pol', '', 60, N, T.calf),
   E('Legs', 'Barbell Front Squat', 'Front squat', 'qua', 'glu aduc add', 180, H,
-    `Bilanciere sulle spalle anteriori, gomiti alti, core contratto|Scendi con busto eretto e ginocchia in linea con le punte|Spingi dal mesopiede mantenendo i gomiti alti`, `Gomiti che cadono, tallone che si stacca`),
+    `Bilanciere sulle spalle anteriori, gomiti alti, core contratto|Scendi con busto eretto e ginocchia che seguono la direzione delle punte|Spingi dal mesopiede mantenendo i gomiti alti`, `Gomiti che cadono, tallone che si stacca`),
   E('Legs', 'Barbell Glute Bridge', 'Glute bridge con bilanciere', 'glu', 'fem', 90, L,
     `Supino, bilanciere sul bacino, piedi vicini ai glutei|Spingi il bacino in alto|Contrai i glutei in cima senza inarcare i lombari`, `Inarcare i lombari, spingere con la punta dei piedi`),
   E('Legs', 'Barbell Squat', 'Squat bilanciere', 'qua glu', 'fem aduc lom add', 180, H, T.squat),
@@ -234,7 +234,7 @@ const BUILTIN = [
   E('Legs', 'Glute-Ham Raise', 'Glute-ham raise', 'fem', 'glu lom pol', 90, L,
     `Caviglie bloccate, corpo in linea, busto in avanti|Scendi controllato mantenendo il corpo dritto|Risali con femorali e glutei fino alla linea del corpo`, `Piegarsi dalla vita, slancio`),
   E('Legs', 'Hack Squat', 'Hack squat', 'qua', 'glu aduc', 150, L,
-    `Schiena e spalle appoggiate, piedi alla larghezza delle spalle|Scendi controllato con ginocchia in linea con le punte|Spingi senza bloccare le ginocchia`, `Ginocchia verso l'interno, bacino che si stacca`),
+    `Schiena e spalle appoggiate, piedi alla larghezza delle spalle|Scendi controllato con le ginocchia che seguono la direzione delle punte|Spingi senza bloccare le ginocchia`, `Ginocchia verso l'interno, bacino che si stacca`),
   E('Legs', 'Hip Trust Machine', 'Hip thrust alla macchina', 'glu', 'fem qua', 90, L,
     `Scapole appoggiate, cintura sul bacino, piedi a terra|Spingi il bacino in alto con tibie quasi verticali in cima|Contrai i glutei in cima senza inarcare i lombari`, `Inarcare i lombari, piedi troppo lontani o vicini`),
   E('Legs', 'Leg Extension Machine', 'Leg extension', 'qua', '', 75, L,
@@ -247,7 +247,7 @@ const BUILTIN = [
   E('Legs', 'Seated Leg Curl Machine', 'Leg curl da seduto', 'fem', 'pol', 75, L, T.legcurl),
   E('Legs', 'Standing Calf Raise Machine', 'Calf in piedi alla macchina', 'pol', '', 60, N, T.calf),
   E('Legs', 'Stiff-Legged Deadlift', 'Stacco a gambe tese', 'fem', 'glu lom avb', 120, H,
-    `In piedi, gambe quasi tese, bilanciere vicino alle cosce|Piega il busto in avanti spingendo il bacino indietro con schiena neutra|Scendi fino a stiramento dei femorali, risali contraendo i glutei`, `Schiena arrotondata, ginocchia bloccate`),
+    `In piedi, gambe quasi tese, bilanciere vicino alle cosce|Piega il busto in avanti spingendo il bacino indietro con schiena neutra|Scendi fino a stiramento dei femorali, risali contraendo i glutei`, `Schiena che si arrotonda a fine corsa sotto carico, ginocchia bloccate`),
   E('Legs', 'Sumo Deadlift', 'Stacco sumo', 'glu qua aduc', 'fem lom dor trp avb', 180, H,
     `Piedi larghi con punte in fuori, presa stretta, schiena neutra|Spingi il pavimento tenendo il bilanciere vicino al corpo|Estendi anche e ginocchia insieme, glutei contratti in cima`, `Ginocchia verso l'interno, schiena arrotondata`),
 
@@ -259,7 +259,7 @@ const BUILTIN = [
   E('Back', 'Deadlift', 'Stacco da terra', 'glu fem lom', 'dor trp qua avb', 180, H, T.deadlift),
   E('Back', 'Dumbbell Row', 'Rematore manubrio', 'dor', 'bic dpo trp', 90, L, T.rowdb),
   E('Back', 'Good Morning', 'Good morning', 'fem lom', 'glu', 120, H,
-    `Bilanciere sui trapezi, ginocchia morbide, schiena neutra|Spingi il bacino indietro inclinando il busto|Scendi fino a stiramento dei femorali, risali spingendo i fianchi in avanti`, `Schiena arrotondata, carico eccessivo`),
+    `Bilanciere sui trapezi, ginocchia morbide, schiena neutra|Spingi il bacino indietro inclinando il busto|Scendi fino a stiramento dei femorali, risali spingendo i fianchi in avanti`, `Schiena che si arrotonda a fine corsa sotto carico, carico eccessivo`),
   E('Back', 'Hammer Strength Row', 'Rematore Hammer Strength', 'dor', 'trp dpo bic', 90, L, T.rowmach),
   E('Back', 'Lat Pulldown', 'Lat machine', 'dor', 'bic dpo avb', 105, L,
     `Presa larga, braccia distese, petto in fuori|Tira la sbarra verso la parte alta del petto portando i gomiti in basso|Contrai le scapole, risalita lenta senza farsi strappare le spalle`, `Tirare dietro la nuca, dondolare con il busto, tirare con i bicipiti`),
@@ -272,7 +272,7 @@ const BUILTIN = [
   E('Back', 'Pulley Monobraccio', 'Pulley monobraccio', 'dor', 'trp dpo bic', 75, L,
     `Busto stabile, braccio disteso verso il cavo|Tira la maniglia verso l'anca portando il gomito indietro|Stringi la scapola, ritorno controllato`, `Ruotare il busto, tirare con il braccio`),
   E('Back', 'Rack Pull', 'Rack pull', 'dor trp lom', 'glu fem avb', 180, H,
-    `Bilanciere nel rack all'altezza delle ginocchia, schiena neutra|Spingi i fianchi in avanti tenendo il bilanciere vicino|Blocca in cima con glutei contratti e spalle indietro`, `Schiena arrotondata, iperestendere in cima`),
+    `Bilanciere nel rack all'altezza delle ginocchia, schiena neutra|Spingi i fianchi in avanti tenendo il bilanciere vicino|Blocca in cima con glutei contratti e spalle indietro`, `Schiena che si arrotonda a fine corsa sotto carico, iperestendere in cima`),
   E('Back', 'Reverse Fly Dumbell', 'Reverse fly manubri', 'dpo', 'trp', 60, N, T.reardb),
   E('Back', 'Reverse Fly Machine', 'Reverse fly machine', 'dpo', 'trp', 60, N, T.revfly),
   E('Back', 'Row Machine', 'Row machine', 'dor', 'trp dpo bic', 90, L, T.rowmach),
@@ -324,11 +324,11 @@ const BUILTIN = [
   E('Chest', 'Decline Hammer Strength Chest Press', 'Chest press declinata Hammer Strength', 'pet', 'tri dan', 90, L, T.machpress),
   E('Chest', 'Flat Barbell Bench Press', 'Panca piana bilanciere', 'pet', 'tri dan', 150, H, T.bench),
   E('Chest', 'Flat Dumbbell Bench Press', 'Panca piana manubri', 'pet', 'tri dan', 120, L,
-    `Disteso, manubri all'altezza del petto, scapole bloccate|Scendi controllato con gomiti a ~45-75° dal busto|Spingi in alto avvicinando i manubri senza sbatterli`, `Gomiti troppo larghi, scendere troppo veloce`),
+    `Disteso, manubri all'altezza del petto, scapole bloccate|Scendi controllato con gomiti a ~45-60° dal busto|Spingi in alto avvicinando i manubri senza sbatterli`, `Gomiti troppo larghi, scendere troppo veloce`),
   E('Chest', 'Flat Dumbbell Fly', 'Croci manubri panca piana', 'pet', 'dan', 75, N,
     `Disteso, manubri sopra il petto, gomiti leggermente flessi|Apri le braccia in arco fino a stirare il petto|Richiudi in arco contraendo il petto`, `Gomiti che si flettono e si estendono, scendere troppo`),
   E('Chest', 'Incline Barbell Bench Press', 'Panca inclinata bilanciere', 'pet', 'dan tri', 150, H,
-    `Panca a 30-45°, scapole addotte, piedi saldi|Scendi verso la parte alta del petto con gomiti a ~45-75°|Spingi senza staccare i glutei, non rimbalzare`, `Inclinazione eccessiva (lavorano più le spalle), rimbalzo`),
+    `Panca a 30-45°, scapole addotte, piedi saldi|Scendi verso la parte alta del petto con gomiti a ~45-60°|Spingi senza staccare i glutei, non rimbalzare`, `Inclinazione eccessiva (lavorano più le spalle), rimbalzo`),
   E('Chest', 'Incline Dumbbell Bench Press', 'Panca inclinata manubri', 'pet', 'dan tri', 120, L,
     `Panca a 30-45°, manubri all'altezza del petto, scapole bloccate|Scendi controllato con gomiti leggermente avanti rispetto al busto|Spingi in alto avvicinando i manubri senza sbatterli`, `Inclinazione eccessiva, scendere troppo veloce`),
   E('Chest', 'Incline Dumbbell Fly', 'Croci manubri panca inclinata', 'pet', 'dan', 75, N,
@@ -547,9 +547,9 @@ function status(sets) {
   const { low, high } = S.cfg;
   if (sets <= 0) return { k: 'zero', t: 'Non allenato', c: '#444b59' };
   if (sets < low / 2) return { k: 'low', t: 'Carente', c: '#e5484d' };
-  if (sets < low) return { k: 'mid', t: 'Poco', c: '#f0a43a' };
+  if (sets < low) return { k: 'mid', t: 'Sotto obiettivo', c: '#f0a43a' };
   if (sets <= high) return { k: 'ok', t: 'Ok', c: '#3fb76f' };
-  return { k: 'high', t: 'Alto', c: '#4c8dff' };
+  return { k: 'high', t: 'Sopra obiettivo', c: '#4c8dff' };
 }
 function daysAgo(s) { return Math.round((parse(today()) - parse(s)) / 86400000); }
 
@@ -757,7 +757,7 @@ function viewStats() {
 function viewBody() {
   const st = weekStats(UI.wk, UI.period); const last = lastTrained();
   const need = Object.keys(MUSCLES).filter(m => (LIMD[m] || st[m].sets > 0) && st[m].sets < limOf(m)[0]).sort((a, b) => st[a].sets - st[b].sets);
-  const lg = [['#5c6577', 'Non allenato nel periodo'], ['#23262d', 'Mai allenato'], ['#e5484d', 'Carente'], ['#f0a43a', 'Poco'], ['#3fb76f', 'Ok'], ['#4c8dff', 'Alto']];
+  const lg = [['#5c6577', 'Non allenato nel periodo'], ['#23262d', 'Mai allenato'], ['#e5484d', 'Carente'], ['#f0a43a', 'Sotto obiettivo'], ['#3fb76f', 'Ok'], ['#4c8dff', 'Sopra obiettivo']];
   return weekNav() + `<div class="bodies"><div><small>Fronte</small>${bodySVG('f', st)}</div><div><small>Retro</small>${bodySVG('b', st)}</div></div>
   <div class="legend">${lg.map(([c, t]) => `<span><i style="background:${c}"></i>${t}</span>`).join('')}</div>
   <div class="mtip" id="mtip">Tocca un muscolo per vedere le serie</div>
@@ -1273,7 +1273,7 @@ function gauss(z){const W=320,H=130,X=v=>(v+3)/6*W,Y=v=>H-10-v/.4*(H-34),f=v=>Ma
  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;background:var(--card2);border-radius:10px"><path d="${a}" fill="rgba(76,141,255,.35)"/><path d="${c}" fill="none" stroke="#8a93a6" stroke-width="2"/>${TZ.map(([n,v],i)=>`<line x1="${X(v)}" x2="${X(v)}" y1="22" y2="${H-10}" stroke="#555" stroke-dasharray="3"/><text x="${X(v)}" y="14" font-size="11" fill="#8a93a6" text-anchor="middle">${TH[i][1]}${n}%</text>`).join('')}<line x1="${X(zc)}" x2="${X(zc)}" y1="22" y2="${H-10}" stroke="#ff8d91" stroke-width="3"/></svg>`}
 function rankInfo(){const ex=exRanks(),keys=[...Object.keys(REF).map(k=>[k,catLabel(k),REF[k]]),...Object.keys(EXREF).map(k=>[k,exName(k)==='(esercizio eliminato)'?k:exName(k),EXREF[k]])],gk=UI.gk||'Back';
  const sel=ex.find(x=>x.id===gk&&x.win)||Object.values(rankData()).map(d=>ex.find(x=>x.id===d.ex)).find(x=>x&&x.g===gk),z=sel?zOf(sel.win,sel.ref,sel.iso):null;
- return `<div class="card"><b>Come si legge</b><p class="mut small">Il 1RM stimato (Epley, solo serie fino a 10 ripetizioni) viene riportato a 80 kg di peso con la formula 1RM × (80 / peso)^k, dove k è l'esponente (0,8 di default; la scienza indica circa 0,67, i dati da palestra 0,7–0,9). Si confronta con una mediana (Top 50%) su una campana logaritmica con una dispersione diversa per i carichi pesanti e per l'isolamento (più larga sotto la mediana che sopra, ricavata dai livelli principiante–élite di Strength Level). Le mediane vengono dai livelli “intermedio” di Strength Level (panca, squat, stacco, hack squat, panca presa stretta, leg press, lat pulldown, curl) e, per gli altri esercizi, sono stimate per analogia: modificale se trovi dati migliori. L'altezza è facoltativa: di default non influisce (nessuna fonte indica un valore sicuro). Nei numeri mostrati vedi sempre il rapporto con il tuo peso reale: 80 kg è solo il riferimento a cui sono riferite le mediane, non il tuo peso.</p><select id="gk">${[...Object.keys(REF)].map(k=>`<option value="${k}" ${gk===k?'selected':''}>${catLabel(k)}</option>`).join('')}</select>${sel?gauss(z)+`<small class="mut">${esc(exName(sel.id))}: ${realTxt(sel.win,sel.ref)} → Top ${sel.top}%</small>`:'<small class="mut">Nessun dato recente per questo gruppo.</small>'}</div>
+ return `<div class="card"><b>Come si legge</b><p class="mut small">Il 1RM è una stima (Epley, solo serie fino a 10 ripetizioni): è più affidabile se la serie era vicina al cedimento e tende a sottostimare lo stacco. Viene riportato a 80 kg di peso con la formula 1RM × (80 / peso)^k, dove k è l'esponente (0,8 di default; la scienza indica circa 0,67, i dati da palestra 0,7–0,9). Si confronta con una mediana (Top 50%) su una campana logaritmica con una dispersione diversa per i carichi pesanti e per l'isolamento (più larga sotto la mediana che sopra, ricavata dai livelli principiante–élite di Strength Level). Le mediane vengono dai livelli “intermedio” di Strength Level (panca, squat, stacco, hack squat, panca presa stretta, leg press, lat pulldown, curl) e, per gli altri esercizi, sono stimate per analogia: modificale se trovi dati migliori. L'altezza è facoltativa: di default non influisce (nessuna fonte indica un valore sicuro). Nei numeri mostrati vedi sempre il rapporto con il tuo peso reale: 80 kg è solo il riferimento a cui sono riferite le mediane, non il tuo peso.</p><select id="gk">${[...Object.keys(REF)].map(k=>`<option value="${k}" ${gk===k?'selected':''}>${catLabel(k)}</option>`).join('')}</select>${sel?gauss(z)+`<small class="mut">${esc(exName(sel.id))}: ${realTxt(sel.win,sel.ref)} → Top ${sel.top}%</small>`:'<small class="mut">Nessun dato recente per questo gruppo.</small>'}</div>
  <div class="card"><b>Badge</b>${TH.map(([n,e])=>`<div class="setrow"><span>${e} Top ${n}%</span><span class="mut">${CATS.filter(g=>S.badges[g]&&S.badges[g]<=n).map(catLabel).join(', ')||'—'}</span></div>`).join('')}</div>
  <div class="card"><b>Parametri modificabili</b><label class="lbl">Fattore di dispersione (1 = standard; più alto = classifica più “piatta”)</label><input class="txt" id="rf_sigma" inputmode="decimal" value="${SK()}"><label class="lbl">Considera solo gli ultimi giorni (0 = tutto lo storico)</label><input class="txt" id="rf_win" inputmode="numeric" value="${WIN()}"><small class="mut">Un esercizio non fatto da più giorni di questa finestra (es. cambio scheda) viene escluso dalla classifica.</small>
  <button class="btn" data-a="addref">+ Aggiungi esercizio con la sua mediana</button><label class="lbl"><label class="lbl">Esponente peso k (0,67–0,9)</label><input class="txt" id="rf_kexp" inputmode="decimal" value="${KEXP()}"><label class="lbl">Altezza (cm)</label><input class="txt" id="rf_h" inputmode="numeric" value="${HGT()}"><label class="lbl">Correzione altezza (0 = nessuna; es. 0,5 = penalizza meno i più alti)</label><input class="txt" id="rf_hc" inputmode="decimal" value="${HC()}"><label class="lbl">Mediana Top 50% (1RM a 80 kg ÷ 80)</label>${keys.map(([k,n,v])=>`<div class="setrow"><span>${esc(n)}</span><input class="txt" style="width:90px;margin:0" id="rf_${k}" inputmode="decimal" value="${refOf(k,v)}"></div>`).join('')}<button class="btn ok" data-a="saveref">Salva</button><button class="btn" data-a="resetref">Ripristina valori originali</button></div>`}
@@ -1529,7 +1529,7 @@ const normR=(e1,b)=>e1*Math.pow(80/b,KEXP())/80*Math.pow(HGT()/175,HC());
 function exRanks(){const b=bw();if(!b)return[];const lim=WIN()?addDays(today(),-WIN()):'0000',out={};
  S.sets.forEach(x=>{if(x.r==null||x.r>10||!(x.w>0)||x.wu)return;const e=getEx(x.ex);if(!e)return;const g=groupOf(e);if(!REF[g]&&!EXREF[e.id])return;const o=out[e.id]=out[e.id]||{id:e.id,g,all:0,win:0,last:'0000',known:!!EXREF[e.id]},r=normR(e1rm(x.w,x.r),b);o.all=Math.max(o.all,r);if(x.date>=lim)o.win=Math.max(o.win,r);if(x.date>o.last)o.last=x.date});
  return Object.values(out).map(o=>{const ref=o.known?refOf(o.id,EXREF[o.id]):refOf(o.g,REF[o.g])*isoF(getEx(o.id),o.g);return{...o,ref,top:o.win?topOf(o.win,ref):null,topAll:topOf(o.all,ref)}})}
-function status(sets){const{low,high}=S.cfg;if(sets<=0)return{k:'zero',t:'Non allenato',c:'#444b59'};if(sets<low/2)return{k:'low',t:'Carente',c:'#e5484d'};if(sets<low)return{k:'mid',t:'Poco',c:'#f0a43a'};if(sets<=high)return{k:'ok',t:'Ok',c:'#3fb76f'};return{k:'high',t:'Alto',c:'#4c8dff'}}
+function status(sets){const{low,high}=S.cfg;if(sets<=0)return{k:'zero',t:'Non allenato',c:'#444b59'};if(sets<low/2)return{k:'low',t:'Carente',c:'#e5484d'};if(sets<low)return{k:'mid',t:'Sotto obiettivo',c:'#f0a43a'};if(sets<=high)return{k:'ok',t:'Ok',c:'#3fb76f'};return{k:'high',t:'Sopra obiettivo',c:'#4c8dff'}}
 /* peso */
 const wkRange=()=>bw()?` (circa ${fmtN(bw()*.0025)}–${fmtN(bw()*.005)} kg con il tuo peso)`:'';
 const bmiLine=()=>bw()&&HGT()?`BMI attuale: ${fmtN(bw()/Math.pow(HGT()/100,2))} (altezza ${HGT()} cm, modificabile in Classifica → Info). Per chi si allena è solo indicativo.`:'';
@@ -1620,13 +1620,13 @@ const pw12=persist;persist=async function(k){const r=await pw12(k);if(Array.isAr
 const LIMD={pet:[10,20],dor:[10,20],trp:[6,16],lom:[4,10],dan:[4,10],dla:[8,20],dpo:[8,20],bic:[8,18],tri:[6,16],avb:[4,12],add:[6,16],obl:[4,12],glu:[6,16],qua:[8,18],fem:[6,16],pol:[8,16],aduc:[4,12]};
 const limOf=m=>((S.cfg.lim||{})[m])||LIMD[m]||[S.cfg.low,S.cfg.high];
 let LTC={k:'',v:{}};const ltMap=()=>{const k=S.sets.length+':'+((S.sets[S.sets.length-1]||{}).id||'');if(LTC.k!==k)LTC={k,v:lastTrained()};return LTC.v};
-function status(sets,m){const[low,high]=m?limOf(m):[S.cfg.low,S.cfg.high];if(sets<=0){const ever=m&&ltMap()[m];return ever?{k:'zero',t:'Non allenato nel periodo',c:'#5c6577'}:{k:'never',t:'Mai allenato',c:'#23262d'}}if(sets<low/2)return{k:'low',t:'Carente',c:'#e5484d'};if(sets<low)return{k:'mid',t:'Poco',c:'#f0a43a'};if(sets<=high)return{k:'ok',t:'Ok',c:'#3fb76f'};return{k:'high',t:'Alto',c:'#4c8dff'}}
-function limCard(){return `<div class="card"><b>Serie a settimana per muscolo</b><p class="mut small">Minimo e massimo per ogni muscolo (serie principale = 1, secondaria = 0,5). I muscoli grandi hanno range più alti dei piccoli. Valori di partenza indicativi: cambiali come preferisci.</p>${Object.keys(LIMD).map(m=>{const[l,h]=limOf(m);return `<div class="setrow"><span>${MUSCLES[m]}</span><span><input class="txt lim" id="lm_${m}_l" inputmode="numeric" value="${l}"> – <input class="txt lim" id="lm_${m}_h" inputmode="numeric" value="${h}"></span></div>`}).join('')}<button class="btn ok" data-a="limsave">Salva</button><button class="btn" data-a="limreset">Ripristina valori di partenza</button></div>`}
+function status(sets,m){const[low,high]=m?limOf(m):[S.cfg.low,S.cfg.high];if(sets<=0){const ever=m&&ltMap()[m];return ever?{k:'zero',t:'Non allenato nel periodo',c:'#5c6577'}:{k:'never',t:'Mai allenato',c:'#23262d'}}if(sets<low/2)return{k:'low',t:'Carente',c:'#e5484d'};if(sets<low)return{k:'mid',t:'Sotto obiettivo',c:'#f0a43a'};if(sets<=high)return{k:'ok',t:'Ok',c:'#3fb76f'};return{k:'high',t:'Sopra obiettivo',c:'#4c8dff'}}
+function limCard(){return `<div class="card"><b>Serie a settimana per muscolo</b><p class="mut small">Minimo e massimo per ogni muscolo (serie principale = 1, secondaria = 0,5). I muscoli grandi hanno range più alti dei piccoli. Sono obiettivi, non soglie di pericolo: gli studi (meta-regressione di Pelland e coll.) mostrano che già 4 serie a settimana per muscolo danno crescita, 5–10 sono molto efficienti e oltre 11–18 i rendimenti calano ma non c'è un vero tetto. In una sola sessione, oltre ~10–11 serie per muscolo il vantaggio si appiattisce. Valori di partenza indicativi: cambiali come preferisci.</p>${Object.keys(LIMD).map(m=>{const[l,h]=limOf(m);return `<div class="setrow"><span>${MUSCLES[m]}</span><span><input class="txt lim" id="lm_${m}_l" inputmode="numeric" value="${l}"> – <input class="txt lim" id="lm_${m}_h" inputmode="numeric" value="${h}"></span></div>`}).join('')}<button class="btn ok" data-a="limsave">Salva</button><button class="btn" data-a="limreset">Ripristina valori di partenza</button></div>`}
 /* --- cardio: muscoli e serie equivalenti --- */
-{const C={Swimming:[['dor','dan','dla'],['tri','add','qua','fem'],.12],Cycling:[['qua','glu'],['fem','pol'],.07],'Stationary Bike':[['qua','glu'],['fem','pol'],.07],'Running (Outdoor)':[['qua','pol','glu'],['fem','add'],.08],'Running (Treadmill)':[['qua','pol','glu'],['fem','add'],.08],'Rowing Machine':[['dor','qua'],['bic','glu','fem','add'],.1],'Elliptical Trainer':[['qua','glu'],['pol','fem'],.06],Walking:[[],['pol','glu'],.03]};
+{const C={Swimming:[['dor','dan','dla'],['pet','tri','add','qua','fem'],.12],Cycling:[['qua','glu'],['fem','pol'],.07],'Stationary Bike':[['qua','glu'],['fem','pol'],.07],'Running (Outdoor)':[['qua','pol','glu'],['fem','add'],.08],'Running (Treadmill)':[['qua','pol','glu'],['fem','add'],.08],'Rowing Machine':[['dor','qua'],['bic','glu','fem','add'],.1],'Elliptical Trainer':[['qua','glu'],['pol','fem'],.06],Walking:[[],['pol','glu'],.03]};
  BUILTIN.forEach(e=>{const c=C[e.name];if(c&&e.type==='cardio'){e.p=c[0];e.s=c[1];e.eq=c[2]}})}
 const eqOf=e=>e?((S.cfg.eq||{})[e.id]??e.eq):0;
-const eqf=(x,e)=>e&&e.type==='cardio'&&eqOf(e)?(typeof cardioCounts==='function'&&!cardioCounts(x)?0:Math.min(6,Math.max(.25,(x.min>0?x.min:(x.km>0?x.km*6:0))*eqOf(e)))):1;
+const eqf=(x,e)=>e&&e.type==='cardio'&&eqOf(e)?(typeof cardioEq==='function'?cardioEq(x,e):0):1;
 function dayMap(sel){const o={};S.sets.forEach(x=>{if(x.wu)return;const e=getEx(x.ex);if(!e||(e.type==='cardio'&&eqOf(e)&&eqOf(e)<.05))return;const g=groupOf(e),D=o[x.date]=o[x.date]||{g:new Set(),m:{}};D.g.add(g);if(sel.length&&!sel.includes(g))return;(e.p||[]).forEach(m=>D.m[m]=1);(e.s||[]).forEach(m=>{if(!D.m[m])D.m[m]=.5})});return o}
 /* --- record: peso e volume della serie --- */
 let PRC={key:'',m:{}};
@@ -1836,7 +1836,7 @@ ul.how{margin:6px 0 4px;padding-left:20px;line-height:1.5}ul.how li{margin:3px 0
 /* ===== Come farlo bene: impostazione (valori indicativi, adattali al tuo corpo) ===== */
 const HOWTO = {
   /* Tricipiti */
-  'cable-overhead-triceps-extension': 'Puleggia bassa (altezza caviglia–ginocchio) con corda|Dai le spalle al cavo, un passo avanti, busto leggermente inclinato (10–20°)|Gomiti alti, vicini alle orecchie e fermi: si muove solo l\'avambraccio',
+  'cable-overhead-triceps-extension': 'Puleggia bassa (altezza caviglia–ginocchio) con corda|Dai le spalle al cavo, un passo avanti, busto leggermente inclinato (10–20°)|Gomiti alti, vicini alle orecchie e fermi: si muove solo l\'avambraccio|Scelta prioritaria per i tricipiti (in uno studio di 12 settimane l\'estensione sopra la testa ha dato più crescita del pushdown, Maeo 2022)',
   'close-grip-barbell-bench-press': 'Panca piana, occhi sotto la barra|Presa larga circa quanto le spalle (mani a 25–35 cm tra loro), non più stretta|Gomiti a 30–45° dal busto, la barra scende al basso petto',
   'dumbbell-overhead-triceps-extension': 'Schienale quasi verticale (80–90°)|Manubrio tenuto a due mani, gomiti puntati in alto vicino alla testa|Scendi dietro la nuca finché senti allungamento, senza aprire i gomiti',
   'ez-bar-skullcrusher': 'Panca piana (o declinata 0–15°)|Presa stretta sulle curve interne della barra EZ|Gomiti puntati al soffitto (leggermente indietro), la barra scende verso fronte/dietro la testa',
@@ -1848,12 +1848,12 @@ const HOWTO = {
   'v-bar-push-down': 'Puleggia alta, maniglia a V|Busto inclinato in avanti 10–20°, gomiti ai fianchi|Stendi fino a bloccare i gomiti, risali senza alzare le spalle',
   /* Spalle */
   'arnold-dumbbell-press': 'Schienale a 80–90°|Parti con i manubri davanti al petto, palmi verso di te|Ruota i palmi in avanti mentre spingi',
-  'behind-the-neck-barbell-press': 'Solo con buona mobilità di spalle e dorso: se senti dolore, usa lo shoulder press normale|Seduto, schienale verticale, presa larga (circa 1,5 volte le spalle)|Scendi appena sotto le orecchie, non oltre',
+  'behind-the-neck-barbell-press': 'Esercizio avanzato e facoltativo: il lento davanti è la scelta di default. Solo con buona mobilità di spalle e dorso: se senti dolore, usa lo shoulder press normale|Seduto, schienale verticale, presa larga (circa 1,5 volte le spalle)|Scendi appena sotto le orecchie, non oltre',
   'cable-face-pull': 'Puleggia all\'altezza del viso (circa altezza occhi)|Due passi indietro dalla macchina, corda con presa neutra|Tira verso la fronte/naso con i gomiti alti e aperti',
   'dumbell-shoulder-press': 'Schienale a 75–90°|Manubri all\'altezza delle spalle, avambracci verticali|Spingi senza sbattere i manubri in cima',
   'front-dumbbell-raise': 'In piedi, busto dritto, gomiti leggermente flessi|Sali fino all\'altezza delle spalle (max 90°)',
   'hammer-strength-shoulder-press': 'Regola il sedile: maniglie all\'altezza delle spalle/clavicole|Schiena appoggiata, gomiti sotto i polsi',
-  'lateral-dumbbell-raise': 'In piedi, leggera inclinazione in avanti (10–15°)|Gomiti leggermente flessi (15–20°)|Sali fino all\'altezza delle spalle (80–90°), non oltre',
+  'lateral-dumbbell-raise': 'In piedi, leggera inclinazione in avanti (10–15°)|Gomiti leggermente flessi (15–20°)|Sali fino a circa 90° (altezza delle spalle): è il range studiato; salire oltre non serve',
   'lateral-machine-raise': 'Regola il sedile: asse della leva allineato alla spalla|Cuscinetti appoggiati sopra i gomiti|Sali fino a spalla, senza alzare il trapezio',
   'log-press': 'Piedi larghi quanto le spalle, addome e glutei contratti|Porta il log alle clavicole, poi spingi sopra la testa',
   'one-arm-standing-dumbbell-press': 'Piedi larghi quanto le spalle, addome e glutei contratti|Manubrio alla spalla, non inarcare la schiena',
@@ -1869,18 +1869,18 @@ const HOWTO = {
   'barbell-calf-raise': 'Barra sui trapezi (come lo squat)|Punte su un rialzo di 5–10 cm, talloni liberi|Sali sull\'avampiede a ginocchia quasi estese',
   'barbell-front-squat': 'Barra su clavicole e deltoidi, gomiti alti (paralleli al suolo)|Piedi larghi quanto le spalle o poco più, punte 15–30° fuori|Scendi fino a cosce parallele o sotto',
   'barbell-glute-bridge': 'Scapole su una panca (hip thrust) o a terra|Piedi larghi quanto le anche, tibie verticali in cima|Barra sul bacino con pad, mento verso il petto',
-  'barbell-squat': 'Barra sui trapezi (high bar) o sui deltoidi posteriori (low bar)|Piedi larghi quanto le spalle o poco più, punte 15–30° fuori|Ginocchia in linea con le punte, scendi almeno a cosce parallele|Sguardo avanti, schiena neutra',
+  'barbell-squat': 'Barra sui trapezi (high bar) o sui deltoidi posteriori (low bar)|Piedi larghi quanto le spalle o poco più, punte 15–30° fuori|Ginocchia che seguono la direzione delle punte (possono superarle), scendi almeno a cosce parallele|Sguardo avanti, schiena neutra',
   'donkey-calf-raise': 'Punte su rialzo di 5–10 cm|Busto parallelo al suolo con appoggio saldo|Scendi col tallone in basso, sali sull\'avampiede',
   'glute-ham-raise': 'Ginocchia appena dietro il cuscino, caviglie bloccate|Il tronco scende fino a parallelo al suolo|Risali spingendo con i femorali, senza inarcare la schiena',
   'hack-squat': 'Schiena e spalle appoggiate|Piedi sulla pedana ad altezza media, larghezza spalle, punte 15–30° fuori|Scendi almeno a 90° senza staccare il bacino',
   'hip-trust-machine': 'Scapole inferiori contro il bordo, piedi larghi quanto le anche|Tibie verticali in cima, mento leggermente verso il petto|Non iperestendere la zona lombare',
   'leg-extension-machine': 'Schienale regolato: ginocchia allineate all\'asse della macchina|Cuscinetto sulla parte bassa della tibia (appena sopra le caviglie)|Parti da circa 90° e non bloccare i ginocchi con rimbalzi',
-  'leg-press': 'Schiena e bacino appoggiati, piedi larghi quanto le spalle, altezza media|Ginocchia in linea con le punte|Scendi fino a circa 90° senza staccare il bacino, non bloccare i ginocchi in cima',
-  'lying-leg-curl-machine': 'Ginocchia appena oltre il bordo della panca, asse in linea con le ginocchia|Cuscinetto sopra i talloni|Bacino appoggiato, non staccarlo mentre fletti',
+  'leg-press': 'Schiena e bacino appoggiati, piedi larghi quanto le spalle, altezza media|Ginocchia che seguono la direzione delle punte|Scendi fino a circa 90° senza staccare il bacino, non bloccare i ginocchi in cima',
+  'lying-leg-curl-machine': 'Ginocchia appena oltre il bordo della panca, asse in linea con le ginocchia|Cuscinetto sopra i talloni|Bacino appoggiato, non staccarlo mentre fletti|Il leg curl da seduto ha mostrato più crescita: abbinalo a stacco rumeno se usi questo',
   'romanian-deadlift': 'Piedi larghi quanto le anche, barra vicino alle cosce|Ginocchia leggermente flesse (15–20°), spingi i fianchi indietro|La barra scende fino a metà tibia/sotto il ginocchio con schiena neutra',
-  'seated-calf-raise-machine': 'Cuscino sulle cosce vicino alle ginocchia|Punte sul bordo, scendi fino al tallone completo|Sali sull\'avampiede senza rimbalzi',
-  'seated-leg-curl-machine': 'Schienale e cuscino cosce regolati, asse in linea con le ginocchia|Cuscinetto sopra i talloni',
-  'standing-calf-raise-machine': 'Spalle sotto i cuscini, punte sul bordo del gradino|Ginocchia quasi tese (non bloccate)|Piena escursione: tallone giù, poi in punta',
+  'seated-calf-raise-machine': 'Cuscino sulle cosce vicino alle ginocchia|Punte sul bordo, scendi fino al tallone completo|Allena soprattutto il soleo (ginocchio flesso); per i gastrocnemi è meglio il calf in piedi|Sali sull\'avampiede senza rimbalzi',
+  'seated-leg-curl-machine': 'Schienale e cuscino cosce regolati, asse in linea con le ginocchia|Da seduto i femorali sono più allungati all\'anca: in uno studio (Maeo 2021) è cresciuto di più del leg curl da sdraiato|Cuscinetto sopra i talloni',
+  'standing-calf-raise-machine': 'Spalle sotto i cuscini, punte sul bordo del gradino|Ginocchia quasi tese (non bloccate)|Piena escursione: tallone giù, poi in punta|Preferibile al calf da seduto per i gastrocnemi (studio Kinoshita/Maeo 2023)',
   'stiff-legged-deadlift': 'Come lo stacco rumeno ma con le ginocchia più tese|Piedi larghi quanto le anche|La barra scende finché la schiena resta neutra (di solito sotto le ginocchia)',
   'sumo-deadlift': 'Piedi larghi circa 1,5–2 volte le spalle, punte 30–45° fuori|Presa stretta, mani all\'interno delle ginocchia|Barra sopra metà piede, ginocchia spinte verso l\'esterno',
   /* Schiena */
@@ -1910,10 +1910,10 @@ const HOWTO = {
   'elliptical-trainer': 'Postura eretta, ginocchia morbide|Mani sulle maniglie senza appoggiarti col peso',
   'rowing-machine': 'Pedana regolata a metà piede, cinghie sul metatarso|Sequenza: gambe, busto, braccia (e poi al contrario)|Schiena neutra',
   'running-outdoor': 'Cadenza indicativa 160–180 passi al minuto|Busto leggermente avanti, passo sotto il corpo',
-  'running-treadmill': 'Inclinazione 0–2% per simulare l\'esterno|Non aggrapparti alle maniglie',
+  'running-treadmill': 'Inclinazione 1% alle velocità di corsa normali per simulare l\'esterno (a velocità molto basse 0% e 1% sono equivalenti)|Non aggrapparti alle maniglie',
   'stationary-bike': 'Sellino all\'altezza dell\'anca: ginocchio leggermente flesso (25–35°) in basso',
   'swimming': 'Respira ritmicamente, alterna gli stili|Pausa breve tra le vasche',
-  'walking': 'Passo naturale, circa 5–6 km/h per un lavoro leggero',
+  'walking': 'Passo naturale, circa 5–6 km/h: per la maggior parte degli adulti è già intensità moderata (per un lavoro davvero leggero vai più piano)',
   /* Addominali */
   'ab-wheel-rollout': 'Ginocchia su tappetino, bacino leggermente in retroversione|Vai avanti solo finché la schiena resta neutra, poi torna stringendo l\'addome',
   'cable-crunch': 'Puleggia alta con corda, in ginocchio a 30–50 cm dalla macchina|Corda ai lati della testa|Chiudi arrotondando la colonna, i fianchi non si muovono',
@@ -1922,18 +1922,18 @@ const HOWTO = {
   'decline-crunch': 'Panca declinata 15–30°, piedi bloccati|Solleva busto arrotondando la colonna, non tirare col collo',
   'dragon-flag': 'Panca stabile, spalle appoggiate, mani salde dietro la testa|Corpo in linea retta, scendi lentamente senza piegare l\'anca',
   'hanging-knee-raise': 'Presa prona larga quanto le spalle|Evita di dondolare, bacino in retroversione in cima',
-  'hanging-leg-raise': 'Presa prona larga quanto le spalle|Gambe tese o quasi, bacino in retroversione in cima|Scendi controllando, senza dondolare',
+  'hanging-leg-raise': 'Presa prona larga quanto le spalle|Gambe tese o quasi, bacino in retroversione in cima|Gran parte del lavoro è dei flessori dell\'anca (ileopsoas, retto femorale): gli addominali stabilizzano|Scendi controllando, senza dondolare',
   'plank': 'Gomiti sotto le spalle, corpo in linea retta|Glutei e addome contratti, collo neutro|Indicativo: serie da 20–60 secondi',
   'side-plank': 'Gomito sotto la spalla, corpo in linea retta|Bacino alto, non ruotare il busto',
   /* Petto */
   'cable-crossover': 'Pulegge alte, un passo avanti e busto inclinato 10–20°|Gomiti leggermente flessi, porta le mani verso il centro/anche',
   'chest-press': 'Regola il sedile: maniglie all\'altezza del petto (circa capezzoli)|Schiena appoggiata, scapole addotte|Non bloccare i gomiti in cima',
-  'decline-barbell-bench-press': 'Panca declinata 15–30°, piedi bloccati|Presa larga circa 1,5 volte le spalle|La barra scende al basso petto',
+  'decline-barbell-bench-press': 'Panca declinata 15–30°, piedi bloccati|Presa larga circa 1,2–1,5 volte le spalle|La barra scende al basso petto',
   'decline-hammer-strength-chest-press': 'Regola il sedile: maniglie sotto la linea del petto|Schiena appoggiata, gomiti a 45–60°',
-  'flat-barbell-bench-press': 'Occhi sotto la barra, scapole addotte e depresse|Presa circa 1,5 volte la larghezza delle spalle (avambracci verticali in basso)|Piedi a terra, barra al centro del petto (linea capezzoli)|Gomiti a 45–60° dal busto',
+  'flat-barbell-bench-press': 'Occhi sotto la barra, scapole addotte e depresse|Presa circa 1,2–1,5 volte la larghezza delle spalle (avambracci verticali in basso)|Piedi a terra, barra al centro del petto (linea capezzoli)|Gomiti a 45–60° dal busto',
   'flat-dumbbell-bench-press': 'Panca piana, scapole addotte|Manubri all\'altezza del petto, gomiti a 45–60° dal busto',
   'flat-dumbbell-fly': 'Gomiti leggermente flessi e fermi|Scendi finché senti allungamento del petto, senza oltre la linea delle spalle',
-  'incline-barbell-bench-press': 'Panca inclinata 30–45° (di solito 30° è un buon compromesso)|Barra verso clavicole/alto petto|Presa circa 1,5 volte le spalle',
+  'incline-barbell-bench-press': 'Panca inclinata 30–45° (di solito 30° è un buon compromesso)|Barra verso clavicole/alto petto|Presa circa 1,2–1,5 volte le spalle',
   'incline-dumbbell-bench-press': 'Panca inclinata 30° (massimo 45°)|Manubri all\'altezza dell\'alto petto, gomiti a 45–60°',
   'incline-dumbbell-fly': 'Panca inclinata 20–30°|Gomiti leggermente flessi, allunga il petto senza forzare',
   'incline-hammer-strength-chest-press': 'Regola il sedile: maniglie all\'altezza dell\'alto petto|Schiena appoggiata, scapole addotte',
@@ -2615,12 +2615,24 @@ window.addEventListener('popstate', async () => {
 'use strict';
 const G = window;
 /* cardio sotto la soglia: non conta come allenamento */
-const cardioMin = () => S.cfg.cardioMin == null ? 15 : S.cfg.cardioMin;
+const cardioMin = () => S.cfg.cardioMin == null ? 10 : S.cfg.cardioMin;
+/* minuti per km di default (modificabili): servono solo quando è inserita la distanza senza i minuti */
+const PACE0 = { 'swimming': 25, 'cycling': 2.7, 'stationary-bike': 2.7, 'running-outdoor': 6, 'running-treadmill': 6, 'rowing-machine': 4.5, 'elliptical-trainer': 6, 'walking': 12 };
+const PACEN = { 'swimming': 'Nuoto', 'cycling': 'Ciclismo', 'stationary-bike': 'Cyclette', 'running-outdoor': 'Corsa', 'running-treadmill': 'Tapis roulant', 'rowing-machine': 'Vogatore', 'elliptical-trainer': 'Ellittica', 'walking': 'Camminata' };
+const paceOf = id => ((S.cfg.pace || {})[id]) > 0 ? S.cfg.pace[id] : (PACE0[id] || 6);
+const entryMin = x => x.min > 0 ? x.min : (x.km > 0 ? x.km * paceOf(x.ex) : 0);
+const CAPS = 6; /* massimo di serie equivalenti per attività al giorno */
 let CCK = '', CCM = {};
-G.cardioCounts = function (x) {
-  const key = S.sets.length + ':' + CCK.length;
-  if (!CCM.__k || CCM.__k !== S.sets.length + '|' + CCK) { CCM = { __k: S.sets.length + '|' + CCK }; S.sets.forEach(s => { if (s.min != null) { const k = s.date + '|' + s.ex; CCM[k] = (CCM[k] || 0) + s.min; } }); }
-  return (CCM[x.date + '|' + x.ex] || 0) >= cardioMin();
+function dayTot(x) {
+  if (!CCM.__ok) { CCM = { __ok: 1 }; S.sets.forEach(s => { if (s.min != null || s.km > 0) { const k = s.date + '|' + s.ex; CCM[k] = (CCM[k] || 0) + entryMin(s); } }); }
+  return CCM[x.date + '|' + x.ex] || 0;
+}
+G.cardioCounts = x => dayTot(x) >= cardioMin();
+/* serie equivalenti di una voce cardio: il tetto vale per l'intera giornata e attività, non per la singola voce */
+G.cardioEq = function (x, e) {
+  const f = eqOf(e), t = dayTot(x); if (!(t > 0) || t < cardioMin()) return 0;
+  const k = Math.min(1, CAPS / (t * f));
+  return entryMin(x) * f * k;
 };
 const p15 = persist;
 persist = async function (k) { if (k === 'sets' || k === 'cfg') { CCK += 'x'; if (CCK.length > 50) CCK = ''; CCM = {}; } return p15(k); };
@@ -2636,11 +2648,11 @@ G.dayMap = function (sel) {
 };
 const vm15 = viewMore;
 G.viewMore = function () {
-  return vm15().replace('<details class="card" id="adv"', `<div class="card"><b>Cardio: durata minima</b><p class="mut small">Sotto questa durata (minuti totali del giorno per quell'attività) il cardio non conta come allenamento: non colora i muscoli né il calendario. Utile per riscaldamenti brevi.</p><label class="lbl">Minuti minimi</label><input class="txt" id="c_cm" inputmode="numeric" value="${cardioMin()}"><button class="btn" data-a="savecm">Salva</button></div><details class="card" id="adv"`);
+  return vm15().replace('<details class="card" id="adv"', `<div class="card"><b>Cardio: durata minima</b><p class="mut small">Sotto questa durata (minuti totali del giorno per quell'attività) il cardio non conta come allenamento: non colora i muscoli né il calendario. Utile per riscaldamenti brevi.</p><label class="lbl">Minuti minimi</label><input class="txt" id="c_cm" inputmode="numeric" value="${cardioMin()}"><p class="mut small">Il tetto di 6 serie equivalenti vale per l'intera giornata di ogni attività (due voci da 1 h non contano il doppio di una da 2 h). Se inserisci solo i km, i minuti si ricavano da questi ritmi (minuti per km):</p>${Object.keys(PACEN).map(k => `<div class="setrow"><span>${PACEN[k]}</span><span><input class="txt lim" id="pc_${k}" inputmode="decimal" value="${paceOf(k)}"> min/km</span></div>`).join('')}<button class="btn" data-a="savecm">Salva</button></div><details class="card" id="adv"`);
 };
 document.addEventListener('click', async e => {
   const t = e.target.closest('[data-a="savecm"]'); if (!t) return;
-  const v = parseInt($('#c_cm').value); S.cfg.cardioMin = v >= 0 ? v : 15; await persist('cfg'); toast('Salvato'); render();
+  const v = parseInt($('#c_cm').value); S.cfg.cardioMin = v >= 0 ? v : 10; S.cfg.pace = S.cfg.pace || {}; Object.keys(PACEN).forEach(k => { const el = $('#pc_' + k), p = el ? parseFloat(String(el.value).replace(',', '.')) : 0; if (p > 0) S.cfg.pace[k] = p; }); await persist('cfg'); toast('Salvato'); render();
 });
 
 /* addominali: disegno più naturale */

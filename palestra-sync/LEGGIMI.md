@@ -88,3 +88,9 @@ I file modificati rispetto alla versione precedente sono solo `public/index.html
 - Per l'offline basta aprire l'app una volta con la connessione dopo ogni aggiornamento (scarica da sola tutti i file, foto comprese).
 - Quando carichi la nuova versione includi anche `public/imgdata.js`.
 - Altro → "Cardio: durata minima": sotto la soglia (predefinita 15 minuti al giorno per attività) il cardio non conta come allenamento.
+
+
+## Aggiornamento: cardio corretto e testi rivisti
+- Cardio: tetto di 6 serie **per giorno e attività**, ritmi min/km modificabili (Altro → "Cardio: durata minima"), soglia predefinita 10 minuti, nuoto con il petto.
+- Etichette volume "Sotto/Sopra obiettivo", testi di squat, panca, stacco, camminata, tapis, lento dietro la nuca e altri rivisti.
+- Cache offline aggiornata (`palestra-v5`): apri l'app una volta online dopo il deploy, poi chiudi e riapri.
