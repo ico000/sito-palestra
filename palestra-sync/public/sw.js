@@ -2,7 +2,7 @@
 // - La pagina viene servita SEMPRE dalla copia salvata sul telefono (apertura immediata, anche con rete debole)
 //   e in parallelo viene scaricata la versione nuova: se è cambiata, l'app avvisa di riaprirla.
 // - File statici (immagini, librerie): prima la copia salvata, poi la rete.
-const V = 'palestra-v5';
+const V = 'palestra-v6';
 const SCOPE = self.registration.scope;
 const INDEX = SCOPE;
 const CORE = ['./', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-180.png', 'icons/icon-maskable-512.png'];

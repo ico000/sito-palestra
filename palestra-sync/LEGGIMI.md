@@ -94,3 +94,13 @@ I file modificati rispetto alla versione precedente sono solo `public/index.html
 - Cardio: tetto di 6 serie **per giorno e attività**, ritmi min/km modificabili (Altro → "Cardio: durata minima"), soglia predefinita 10 minuti, nuoto con il petto.
 - Etichette volume "Sotto/Sopra obiettivo", testi di squat, panca, stacco, camminata, tapis, lento dietro la nuca e altri rivisti.
 - Cache offline aggiornata (`palestra-v5`): apri l'app una volta online dopo il deploy, poi chiudi e riapri.
+
+## Aggiornamento UI (v16)
+- Tasto indietro: torna prima ai passaggi dentro la pagina (schede Registra/Storico/Grafico, sotto-schede Statistiche), poi alla pagina precedente.
+- Corpo: peso di nuovo in fondo, con grafico; elenchi "Da allenare" e "Già allenati" con serie fatte / obiettivo; legende dietro "ⓘ Legenda".
+- Recap del calendario ora colora rispetto agli obiettivi (come il tab Corpo).
+- Zoom muscolo: primi 5 esercizi e "＋ altri".
+- Grafici (esercizi e peso): periodo (sempre, mese, 3/6 mesi, anno, intervallo) e base zero o minimo.
+- Elenco esercizi: categorie in ordine fisso dall'alto in basso; la riga resta scorsa dove l'hai lasciata.
+- Attrezzo: scheda sottile in Registra; "serie passate" riscritta in 3 passaggi con ricerca e anteprima.
+- Cache `palestra-v6`.

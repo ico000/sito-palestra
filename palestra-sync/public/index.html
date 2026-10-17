@@ -1341,9 +1341,9 @@ function stretchCard(d){const ld={};S.sets.filter(x=>x.date===d&&!x.wu).forEach(
 const _vd4=viewDay;viewDay=function(){let h=_vd4();const D=dayMap([])[UI.date];
  if(D&&Object.keys(D.m).length){const col=m=>D.m[m]?(D.m[m]===1?gcol(mg(m)):`color-mix(in srgb,${gcol(mg(m))} 50%,#cfd3da)`):'#4a4d55';h=h.replace('<div class="card"><b>Muscoli allenati</b>','<div class="card"><b>Muscoli allenati</b>'+figPair(col)+'<small class="mut">Colore = gruppo · tenue = secondario</small>')}
  return h.replace('<button class="fab"',stretchCard(UI.date)+'<button class="fab"')};
-function recapFig(ds,col){const M=UI.rcM||'g';let fc=col,leg='Pieno = muscolo primario, tenue = solo secondario.';
- if(M==='f'){const st={},a=ds[0],b=ds[ds.length-1],wks=ds.length/7;S.sets.forEach(x=>{if(x.date<a||x.date>b||x.wu)return;const e=getEx(x.ex);if(!e)return;(e.p||[]).forEach(m=>st[m]=(st[m]||0)+1);(e.s||[]).forEach(m=>{if(!(e.p||[]).includes(m))st[m]=(st[m]||0)+.5})});fc=m=>status((st[m]||0)/wks,m).c;leg='Serie a settimana: '+[['#444b59','nessuna'],['#e5484d','carente'],['#f0a43a','poco'],['#3fb76f','ok'],['#4c8dff','alto']].map(([c,t])=>`<span style="color:${c}">● ${t}</span>`).join(' ')}
- return `<div class="chips"><button class="chip ${M==='g'?'p':''}" data-a="rcm" data-v="g">Per gruppo</button><button class="chip ${M==='f'?'p':''}" data-a="rcm" data-v="f">Per frequenza</button></div>${figPair(fc)}<small class="mut">${leg}</small>`}
+function recapFig(ds,col){const M=UI.rcM||'f';let fc=col,leg='Pieno = muscolo primario, tenue = solo secondario.';
+ if(M==='f'){const st={},a=ds[0],b=ds[ds.length-1],wks=ds.length/7;S.sets.forEach(x=>{if(x.date<a||x.date>b||x.wu)return;const e=getEx(x.ex);if(!e)return;const f=eqf(x,e);(e.p||[]).forEach(m=>st[m]=(st[m]||0)+f);(e.s||[]).forEach(m=>{if(!(e.p||[]).includes(m))st[m]=(st[m]||0)+.5*f})});fc=m=>status((st[m]||0)/wks,m).c;leg='Serie a settimana: '+[['#444b59','nessuna'],['#e5484d','carente'],['#f0a43a','poco'],['#3fb76f','ok'],['#4c8dff','alto']].map(([c,t])=>`<span style="color:${c}">● ${t}</span>`).join(' ')}
+ return `<div class="chips"><button class="chip ${M==='g'?'p':''}" data-a="rcm" data-v="g">Per gruppo</button><button class="chip ${M==='f'?'p':''}" data-a="rcm" data-v="f">Rispetto agli obiettivi</button></div>${figPair(fc)}<small class="mut">${leg}</small>`}
 async function pickAdd(id){const p=UI.pickFor;UI.pickFor=null;
  if(p.t==='ref'){const v=num(await askText(`Mediana (Top 50%) di "${exName(id)}": 1RM ÷ peso corporeo (es. 0.8)`));if(v>0){S.cfg.xref=Object.assign(S.cfg.xref||{},{[id]:v});EXREF[id]=v;await persist('cfg')}UI.sTab='r';UI.rT='i';return go('stats')}
  if(p.t==='plan'){const l=S.plans[p.n]=S.plans[p.n]||[];if(!l.includes(id))l.push(id);await persist('plans');return go('plans')}
@@ -1831,6 +1831,18 @@ ul.how{margin:6px 0 4px;padding-left:20px;line-height:1.5}ul.how li{margin:3px 0
 .dndlist>.card{margin-bottom:8px}
 /* meteo scroll orizzontale degli esercizi */
 .exnum{font-variant-numeric:tabular-nums}
+/* v16 */
+.tcard.slim{background:none;border:0;box-shadow:none;padding:0;margin:4px 0 8px}
+.tcard .trw{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:4px 0}
+.tcard .twb{display:inline-flex;align-items:center;gap:4px;color:var(--mut)}
+.tcard .tw{width:70px;margin:0;padding:6px 8px;text-align:center}
+.tcard .chip{padding:5px 10px;font-size:13px}
+.tcard .ttot{font-size:13px;margin:2px 0}.tcard .ttot:empty{display:none}
+.tcard .link2{margin-left:auto;font-size:12px}
+.morech{display:contents}
+.infob{background:var(--card2);color:var(--mut);border-radius:14px;padding:4px 10px;font-size:12px;margin:2px 0 8px}
+.gctl{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.gctl select,.gctl input{flex:1;min-width:110px;margin:0}
+#tm_ex{width:100%}
 </style>
 <script>
 /* ===== Come farlo bene: impostazione (valori indicativi, adattali al tuo corpo) ===== */
@@ -2138,19 +2150,17 @@ function tselSet(id) {
 }
 function ttotHtml() {
   const s = UI.tsel || NO_T, w = $('#w') ? num($('#w').value) : 0, tw = $('#tw') ? num($('#tw').value) : s.tw, vw = $('#vw') ? num($('#vw').value) : s.vw;
+  if (s.at === 'none' && !(vw > 0)) return '';
   const total = (w + (s.at === 'none' ? 0 : tw)) * (s.tf == null ? 1 : s.tf) + vw;
   const tl = tLine({ at: s.at, tw, tf: s.tf, vw });
-  return `Carico totale effettivo: <b>${fmtN(total)} kg</b>${tl ? ` <span class="mut">(${fmtN(w)} kg inseriti + ${esc(tl)})</span>` : ''}<br><span class="mut">Nello storico vedi sempre ${fmtN(w)} kg con l'icona; record e classifica usano il totale.</span>`;
+  return `Carico totale: <b>${fmtN(total)} kg</b>${tl ? ` <span class="mut">(${fmtN(w)} kg inseriti + ${esc(tl)})</span>` : ''}`;
 }
 function toolCard(ex) {
   tselInit(ex); const s = UI.tsel, t = getTool(s.at);
-  const showTw = s.at !== 'none' && t.k !== 'cable';
-  return `<div class="card tcard" id="tcard"><div class="mhead"><b>Attrezzo</b><button class="chip o" data-a="tpick">${tIcon(t)} ${esc(t.n)}${t.k === 'cable' ? ' · ' + facTxt(s.tf) : (s.tw ? ' · +' + fmtN(s.tw) + ' kg' : '')} ▾</button></div>
-  ${showTw ? `<label class="lbl">${t.k === 'mach' || t.k === 'smith' ? 'Peso base (kg)' : 'Peso proprio dell\'attrezzo (kg)'}</label><input class="txt" id="tw" inputmode="decimal" value="${fmtN(s.tw)}">` : ''}
-  ${t.k === 'cable' ? `<small class="mut">Il carico che senti è il peso sul cavo × ${facTxt(s.tf)}${s.tf < 1 ? ' (con carrucola il peso reale è minore)' : ''}.</small>` : ''}
-  <details class="fold sub" ${s.vw > 0 ? 'open' : ''}><summary>＋ Zavorra addosso (giacca, cintura)</summary><div class="fbody"><input class="txt" id="vw" inputmode="decimal" placeholder="kg di zavorra" value="${s.vw ? fmtN(s.vw) : ''}"></div></details>
-  <div class="ttot" id="ttot">${ttotHtml()}</div>
-  <button class="link2" data-a="tgo">Imposta attrezzo per le serie passate…</button></div>`;
+  const showTw = s.at !== 'none' && t.k !== 'cable', vOpen = s.vw > 0 || UI.vestOpen;
+  return `<div class="tcard slim" id="tcard"><div class="trw"><span class="mut small">Attrezzo</span><button class="chip o" data-a="tpick">${tIcon(t)} ${esc(t.n)}${t.k === 'cable' ? ' · ' + facTxt(s.tf) : ''} ▾</button>${showTw ? `<span class="twb"><input class="txt tw" id="tw" inputmode="decimal" value="${fmtN(s.tw)}" aria-label="Peso dell'attrezzo in kg"> kg</span>` : ''}<button class="chip" data-a="tvest">${vOpen ? '−' : '＋'} zavorra</button><button class="link2" data-a="tgo">serie passate</button></div>
+  ${vOpen ? `<div class="trw"><input class="txt tw" id="vw" inputmode="decimal" placeholder="kg zavorra" value="${s.vw ? fmtN(s.vw) : ''}"><span class="mut small">kg addosso (giacca, cintura)</span></div>` : ''}
+  <div class="ttot" id="ttot">${ttotHtml()}</div></div>`;
 }
 G.ttotHtmlG = ttotHtml;
 const refreshToolCard = () => { const c = $('#tcard'); if (c && UI.exId) c.outerHTML = toolCard(getEx(UI.exId)); };
@@ -2180,6 +2190,7 @@ document.addEventListener('click', async e => {
   if (e.target.closest('.step button')) setTimeout(refreshTot, 0);
   const t = e.target.closest('[data-a]'); if (!t) return; const a = t.dataset.a;
   if (a === 'tpick') { const all = toolAll(), i = await toolSheet(all, UI.tsel.at); if (i >= 0) { tselSet(all[i].id); refreshToolCard(); } }
+  else if (a === 'tvest') { UI.vestOpen = !UI.vestOpen; if (!UI.vestOpen && UI.tsel) UI.tsel.vw = 0; refreshToolCard(); }
   else if (a === 'tgo') { UI.tm = Object.assign(UI.tm || {}, { ex: UI.exId }); go('tools', { from: 'more' }); }
 });
 
@@ -2192,7 +2203,20 @@ function tmInit() {
   UI.tm = Object.assign({ ex: '*', q: '', d0: ds[0] || today(), d1: ds[ds.length - 1] || today(), only: true, at: 'bar20', tw: 20, tf: 1, vw: 0, init: 1 }, UI.tm || {});
   return UI.tm;
 }
-const bulkMatches = () => { const m = tmInit(), q = (m.q || '').toLowerCase(); return S.sets.filter(x => { if (x.min != null) return false; const e = getEx(x.ex); if (!e || e.type === 'cardio') return false; if (m.ex !== '*' && x.ex !== m.ex) return false; if (q && !(e.name + ' ' + (e.it || '')).toLowerCase().includes(q)) return false; if (x.date < m.d0 || x.date > m.d1) return false; if (m.only && sOf(x)) return false; return true; }); };
+const bulkMatches = (ign) => { const m = tmInit(), q = (m.q || '').toLowerCase(); return S.sets.filter(x => { if (x.min != null) return false; const e = getEx(x.ex); if (!e || e.type === 'cardio') return false; if (m.ex !== '*' && x.ex !== m.ex) return false; if (q && m.ex === '*' && !(e.name + ' ' + (e.it || '')).toLowerCase().includes(q)) return false; if (x.date < m.d0 || x.date > m.d1) return false; if (m.only && !ign && sOf(x)) return false; return true; }); };
+const exFiltered = () => { const m = tmInit(), q = (m.q || '').toLowerCase().trim(); return exIdsWithSets().filter(id => { if (id === m.ex) return true; if (!q) return true; const e = getEx(id); return (e.name + ' ' + (e.it || '')).toLowerCase().includes(q); }); };
+const bulkTot = (x, m) => { const t = getTool(m.at), none = m.at === 'none'; return ((x.w || 0) + ((none || t.k === 'cable') ? 0 : (m.tw || 0))) * (m.tf == null ? 1 : m.tf) + (m.vw > 0 ? m.vw : 0); };
+function bulkInfo() {
+  const m = tmInit(), L = bulkMatches(), n = L.length;
+  let h = `<b>${n}</b> serie verranno modificate.`;
+  if (!n) { const n2 = bulkMatches(true).length; h = n2 ? `Nessuna serie da modificare: ne ho trovate <b>${n2}</b> ma hanno già un attrezzo. Togli la spunta qui sotto per sovrascriverle.` : 'Nessuna serie trovata: controlla l\'esercizio scelto e il periodo.'; }
+  else h += '<br>' + L.slice(-3).reverse().map(x => `<small class="mut">${fmtShort(x.date)} · ${esc(exName(x.ex))}: ${fmtN(x.w)} kg → totale ${fmtN(bulkTot(x, m))} kg</small>`).join('<br>');
+  return h;
+}
+function bulkExSel() {
+  const m = tmInit(), f = exFiltered();
+  return `<select id="tm_ex" data-e="1" size="${Math.min(6, f.length + 1)}"><option value="*" ${m.ex === '*' ? 'selected' : ''}>Tutti quelli trovati dalla ricerca${f.length ? ' (' + f.length + ')' : ''}</option>${f.map(id => `<option value="${id}" ${m.ex === id ? 'selected' : ''}>${esc(exName(id))}</option>`).join('')}</select>`;
+}
 function toolRows() {
   return toolAll().filter(t => t.id !== 'none').map(t => `<div class="trow">${tIcon(t)}<div class="tn"><b>${esc(t.n)}</b><small>${t.k === 'cable' ? 'carico sentito ' + facTxt(t.f == null ? 1 : t.f) + (t.p ? ' · ' + t.p + ' carrucol' + (t.p === 1 ? 'a' : 'e') : '') : t.v ? 'peso a tua scelta ogni volta' : '+' + fmtN(t.w || 0) + ' kg'}${t.builtin ? '' : ' · tuo'}</small></div><button class="chip" data-a="tedit" data-id="${t.id}">Modifica</button></div>`).join('');
 }
@@ -2203,14 +2227,14 @@ G.viewTools = function () {
   const fields = (p, st, tt) => `${tt.k !== 'cable' && st.at !== 'none' ? `<label class="lbl">Peso dell'attrezzo (kg)</label><input class="txt" id="${p}_tw" inputmode="decimal" value="${fmtN(st.tw)}">` : ''}${tt.k === 'cable' ? `<small class="mut">Carico sentito: peso sul cavo × ${facTxt(st.tf)}</small>` : ''}<label class="lbl">Zavorra addosso (kg, facoltativa)</label><input class="txt" id="${p}_vw" inputmode="decimal" value="${st.vw ? fmtN(st.vw) : ''}">`;
   return `<div class="bar"><button data-a="back">‹</button><h2>Attrezzi e zavorre</h2><span></span></div>
   <div class="card"><b>Come funziona</b><p class="mut small">Tu inserisci sempre i pesi che carichi (dischi, stack). L'attrezzo (sbarra, EZ, macchinario, giacca) viene salvato a parte: nello storico vedi il tuo peso con una piccola icona, mentre record, 1RM e classifica usano il carico totale (inserito + attrezzo). Con le carrucole il peso sul cavo viene moltiplicato per il fattore (½ per la doppia, ⅓ per la tripla: puoi cambiarlo).</p></div>
-  <details class="card fold" ${UI.fold && UI.fold['Applica a serie passate'] ? 'open' : ''} data-k="Applica a serie passate"><summary>Applica a serie già registrate</summary><div class="fbody">
-   <small class="mut">Per lo storico che hai già: scegli esercizio (o filtra per nome, es. "barbell"), intervallo di date e attrezzo.</small>
-   <label class="lbl">Esercizio</label><select id="tm_ex">${exOpts}</select>
-   <label class="lbl">Il nome contiene (facoltativo)</label><input class="txt" id="tm_q" value="${esc(m.q || '')}" placeholder="es. barbell, ez-bar, cable">
+  <details class="card fold" ${UI.fold && UI.fold['Applica a serie passate'] ? 'open' : ''} data-k="Applica a serie passate"><summary>Imposta l'attrezzo sulle serie già registrate</summary><div class="fbody">
+   <small class="mut">Tre passaggi: 1) scegli di quali serie parlo, 2) scegli l'attrezzo che avevi, 3) controlla il numero e applica. Puoi annullare subito dopo.</small>
+   <label class="lbl">1 · Quali serie? Cerca l'esercizio</label><input class="txt" id="tm_q" value="${esc(m.q || '')}" placeholder="es. chest press, panca, curl" autocomplete="off">
+   <div id="tm_exw">${bulkExSel()}</div>
    <div class="hctl"><div><label class="lbl">Dal</label><input class="txt" type="date" id="tm_d0" value="${m.d0}"></div><div><label class="lbl">Al</label><input class="txt" type="date" id="tm_d1" value="${m.d1}"></div></div>
-   <label class="lbl">Attrezzo</label><select id="tm_at">${toolOpts(m.at)}</select>${fields('tm', m, t)}
-   <label class="lbl" style="display:flex;gap:10px;align-items:center;text-transform:none"><input type="checkbox" id="tm_only" ${m.only ? 'checked' : ''} style="width:22px;height:22px"> Solo serie senza attrezzo già impostato</label>
-   <div class="ttot"><b>${n}</b> serie verranno modificate.</div>
+   <label class="lbl">2 · Che attrezzo era?</label><select id="tm_at">${toolOpts(m.at)}</select>${fields('tm', m, t)}
+   <label class="lbl" style="display:flex;gap:10px;align-items:center;text-transform:none"><input type="checkbox" id="tm_only" ${m.only ? 'checked' : ''} style="width:22px;height:22px"> Salta le serie che hanno già un attrezzo</label>
+   <label class="lbl">3 · Risultato</label><div class="ttot" id="tm_cnt">${bulkInfo()}</div>
    <button class="btn ok" data-a="bkapply" ${n ? '' : 'disabled style="opacity:.5"'}>Applica a ${n} serie</button>
    ${und ? `<button class="btn" data-a="bkundo">↩ Annulla l'ultima applicazione (${und.n} serie)</button>` : ''}</div></details>
   <details class="card fold" ${UI.fold && UI.fold['Predefinito per esercizio'] ? 'open' : ''} data-k="Predefinito per esercizio"><summary>Attrezzo predefinito per esercizio</summary><div class="fbody">
@@ -2222,8 +2246,9 @@ G.viewTools = function () {
   <details class="card fold" ${UI.fold && UI.fold['Elenco attrezzi'] ? 'open' : ''} data-k="Elenco attrezzi"><summary>Elenco attrezzi e pesi</summary><div class="fbody">${toolRows()}<button class="btn" data-a="tnew">＋ Aggiungi un attrezzo tuo</button>
    <small class="mut">Icone: sbarra pesante (blu) e leggera (verde) hanno colori diversi; EZ, trap bar, Smith, macchinario, cavi (1, 2 o 3 carrucole) e zavorra hanno la loro.</small></div></details>`;
 };
+document.addEventListener('input', e => { if (e.target.id !== 'tm_q') return; const m = tmInit(); m.q = e.target.value; if (m.ex !== '*') { const f = exFiltered(); if (!f.includes(m.ex)) m.ex = '*'; } const w = $('#tm_exw'), c = $('#tm_cnt'); if (w) w.innerHTML = bulkExSel(); if (c) c.innerHTML = bulkInfo(); const b = $('[data-a="bkapply"]'); if (b) { const n = bulkMatches().length; b.textContent = 'Applica a ' + n + ' serie'; b.disabled = !n; b.style.opacity = n ? '' : '.5'; } });
 document.addEventListener('change', e => {
-  const t = e.target, id = t.id || ''; if (!/^(tm|td)_/.test(id)) return;
+  const t = e.target, id = t.id || ''; if (!/^(tm|td)_/.test(id) || id === 'tm_q') return;
   const p = id.slice(0, 2), f = id.slice(3), st = p === 'tm' ? tmInit() : (UI.td = UI.td || { ex: '', at: 'bar20', tw: 20, tf: 1, vw: 0 });
   if (f === 'at') { const tt = getTool(t.value); st.at = t.value; st.tf = tt.k === 'cable' ? (tt.f == null ? 1 : tt.f) : 1; st.tw = (tt.k === 'cable' || t.value === 'none') ? 0 : (tt.v ? (TLAST.v[t.value] != null ? TLAST.v[t.value] : (tt.w || 0)) : (tt.w || 0)); }
   else if (f === 'tw' || f === 'vw') st[f] = num(t.value);
@@ -2458,14 +2483,10 @@ G.weightCard = function () {
   return `<div class="card"><b>⚖️ Peso corporeo</b>${l ? `<div style="font-size:30px;font-weight:700;margin:6px 0">${fmtN(l.kg)} kg <small class="mut" style="font-size:13px">${fmtShort(l.d)}${p ? ` · ${l.kg >= p.kg ? '+' : ''}${fmtN(l.kg - p.kg)} vs precedente` : ''}</small></div>` : '<p class="mut">Nessuna pesata ancora.</p>'}
   <div class="hctl"><div><label class="lbl">Peso di oggi (kg)</label><input class="txt" id="wkg" inputmode="decimal" value="${l ? fmtN(l.kg) : ''}"></div><div><label class="lbl">Momento</label><select id="wwhen">${['Mattina a digiuno', 'Dopo mangiato', 'Sera'].map(x => `<option ${l && l.w === x ? 'selected' : ''}>${x}</option>`).join('')}</select></div></div>
   <button class="btn ok" data-a="wsave">Salva peso</button>
-  <details class="fold sub" data-k="wdet" ${UI.fold && UI.fold.wdet === true ? 'open' : ''}><summary>Andamento, media settimanale e consigli</summary><div class="fbody">${wChart(W.slice(-24))}
+  <details class="fold sub" data-k="wgraph" ${UI.fold && UI.fold.wgraph === false ? '' : 'open'}><summary>Grafico del peso</summary><div class="fbody">${window.wGraph ? window.wGraph() : ''}</div></details>
+  <details class="fold sub" data-k="wdet" ${UI.fold && UI.fold.wdet === true ? 'open' : ''}><summary>Media settimanale, storico e consigli</summary><div class="fbody">
   <small class="mut" style="display:block;margin:8px 0">Per la misura più confrontabile: sabato o domenica mattina, appena alzato, dopo il bagno e prima di mangiare/bere, stessa bilancia e abbigliamento leggero. Il peso del weekend tende a essere più alto: se puoi pesati sia sabato sia domenica e guarda la media settimanale e la tendenza su più settimane, non il singolo valore. Per prendere peso senza troppo grasso, un ritmo ragionevole è 0,25–0,5% del peso corporeo a settimana${wkRange()}. ${bmiLine()}</small>
   ${weekAvg(W)}${W.slice(-12).reverse().map(x => `<div class="setrow tap" data-a="wedit" data-d="${x.d}"><span>${fmtShort(x.d)} · ${esc(x.w || '')} ✎</span><span>${fmtN(x.kg)} kg</span><button class="x" data-a="wdel" data-d="${x.d}">✕</button></div>`).join('')}</div></details></div>`;
-};
-const vb14 = viewBody;
-G.viewBody = function () {
-  const h = vb14(), i = h.indexOf('<div class="card"><b>⚖️ Peso corporeo</b>'); if (i < 0) return h;
-  return h.slice(i) + h.slice(0, i);
 };
 const mt14 = musTip;
 G.musTip = function (m) {
@@ -2574,7 +2595,7 @@ G.checkRank = async function (ex, rec, pb) { const r = await chk14(ex, rec, pb);
 /* ---------- Tasto indietro di Android: torna alla schermata precedente ---------- */
 const NAV = { stk: [], last: null, key: null, pop: false, exitAt: 0 };
 const fullSnap = () => ({ view: UI.view, exId: UI.exId, tab: UI.tab, from: UI.from, filter: UI.filter, group: UI.group, pickFor: UI.pickFor || null, date: UI.date, rc: UI.rc, sTab: UI.sTab, rT: UI.rT, tm: UI.tm, wk: UI.wk, period: UI.period });
-const navKey = () => UI.view + '|' + (UI.view === 'ex' ? UI.exId : '');
+const navKey = () => UI.view + '|' + (UI.view === 'ex' ? UI.exId + '|' + UI.tab : '') + (UI.view === 'stats' ? '|' + (UI.sTab || 'w') + (UI.rT || '') : '');
 const rnN = render;
 G.render = function () {
   rnN();
@@ -2682,5 +2703,123 @@ G.addEventListener('imgdata', async () => {
 });
 /* aggiornamenti scaricati in background */
 if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => { if (e.data && e.data.t === 'upd') toast('Aggiornamento scaricato: chiudi e riapri l\'app per usarlo'); });
+})();
+/* ===== v16: grafici con periodo/base, peso, liste, legende, ordine ===== */
+(function () {
+'use strict';
+const G = window;
+/* ---------- grafici ---------- */
+UI.gc = UI.gc || { ex: { r: 'all', f: '', t: '', b: 'zero' }, w: { r: 'all', f: '', t: '', b: 'min' } };
+const RNG = [['all', 'Sempre'], ['1m', 'Ultimo mese'], ['3m', 'Ultimi 3 mesi'], ['6m', 'Ultimi 6 mesi'], ['1y', 'Ultimo anno'], ['c', 'Intervallo…']];
+const DAYS = { '1m': 30, '3m': 91, '6m': 182, '1y': 365 };
+function gctl(k) {
+  const s = UI.gc[k];
+  return `<div class="gctl"><select data-g="${k}" data-f="r">${RNG.map(([v, t]) => `<option value="${v}" ${s.r === v ? 'selected' : ''}>${t}</option>`).join('')}</select><select data-g="${k}" data-f="b"><option value="zero" ${s.b === 'zero' ? 'selected' : ''}>Parti da zero</option><option value="min" ${s.b === 'min' ? 'selected' : ''}>Dal valore minimo</option></select></div>
+  <div class="gctl" id="gcc_${k}" ${s.r === 'c' ? '' : 'hidden'}><input class="txt" type="date" data-g="${k}" data-f="f" value="${s.f}"><input class="txt" type="date" data-g="${k}" data-f="t" value="${s.t}"></div>`;
+}
+function inRange(data, s) {
+  if (s.r === 'all') return data;
+  if (s.r === 'c') return data.filter(p => (!s.f || p.d >= s.f) && (!s.t || p.d <= s.t));
+  const lim = addDays(today(), -DAYS[s.r]); return data.filter(p => p.d >= lim);
+}
+function drawChart(cv, data0, s, unit) {
+  const data = inRange(data0, s), c = cv.getContext('2d'), W = cv.width, H = cv.height;
+  c.clearRect(0, 0, W, H);
+  if (!data.length) { c.fillStyle = '#8a93a6'; c.font = '28px sans-serif'; c.fillText('Nessun dato in questo periodo', 40, 60); cv._pts = []; return; }
+  const L = 80, R = 30, T = 30, B = 60, vs = data.map(p => p.v);
+  let mx = Math.max(...vs), mn = Math.min(...vs);
+  if (s.b === 'zero') { mn = Math.min(0, mn); mx = mx * 1.1; if (mx === mn) mx = mn + 1; }
+  else { let pad = (mx - mn) * .12; if (!pad) pad = Math.max(1, Math.abs(mx) * .05); mn -= pad; mx += pad; }
+  const fm = v => (mx - mn) < 10 ? (Math.round(v * 10) / 10).toString().replace('.', ',') : String(Math.round(v));
+  const t0 = parse(data[0].d).getTime(), t1 = parse(data[data.length - 1].d).getTime();
+  const X = d => data.length === 1 || t1 === t0 ? (L + W - R) / 2 : L + (parse(d).getTime() - t0) / (t1 - t0) * (W - L - R);
+  const Y = v => T + (1 - (v - mn) / (mx - mn)) * (H - T - B);
+  c.strokeStyle = '#2b303b'; c.fillStyle = '#8a93a6'; c.font = '22px sans-serif'; c.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) { const v = mn + (mx - mn) * i / 4, y = Y(v); c.beginPath(); c.moveTo(L, y); c.lineTo(W - R, y); c.stroke(); c.fillText(fm(v), 8, y + 7); }
+  c.fillText(fmtShort(data[0].d), L, H - 20); const lt = fmtShort(data[data.length - 1].d); c.fillText(lt, W - R - c.measureText(lt).width, H - 20);
+  c.beginPath(); data.forEach((p, i) => { const x = X(p.d), y = Y(p.v); i ? c.lineTo(x, y) : c.moveTo(x, y); });
+  c.strokeStyle = '#4c8dff'; c.lineWidth = 4; c.stroke();
+  cv._pts = data.map(p => ({ x: X(p.d), y: Y(p.v), p }));
+  c.fillStyle = '#4c8dff'; cv._pts.forEach(q => { c.beginPath(); c.arc(q.x, q.y, 7, 0, 7); c.fill(); });
+  cv.onclick = ev => {
+    const r = cv.getBoundingClientRect(), x = (ev.clientX - r.left) * W / r.width, y = (ev.clientY - r.top) * H / r.height;
+    let b = null, bd = 1e9; cv._pts.forEach(q => { const dd = Math.hypot(q.x - x, q.y - y); if (dd < bd) { bd = dd; b = q; } });
+    const tip = cv.parentNode.querySelector('.gtip'); if (b && tip) tip.textContent = `${fmtDate(b.p.d)}: ${fmtN(b.p.v)}${unit || ''}`;
+  };
+}
+G.exGraph = function (ex) {
+  const g = curGraph(ex);
+  return `<select id="gsel">${graphOpts(ex).map(([k, t]) => `<option value="${k}" ${g === k ? 'selected' : ''}>${t}</option>`).join('')}</select>${gctl('ex')}<canvas id="cv" width="700" height="520"></canvas><div class="mut small center gtip" id="gtip">Tocca un punto per i dettagli</div>`;
+};
+G.drawGraph = function () { const cv = $('#cv'); if (!cv) return; const ex = getEx(UI.exId); drawChart(cv, graphData(ex), UI.gc.ex); };
+const wData = () => { const m = {}; S.weights.forEach(x => (m[x.d] = m[x.d] || []).push(x.kg)); return Object.keys(m).sort().map(d => ({ d, v: m[d].reduce((a, c) => a + c, 0) / m[d].length })); };
+G.wGraph = function () { return S.weights.length ? `${gctl('w')}<canvas id="wcv" width="700" height="520" style="width:100%"></canvas><div class="mut small center gtip">Tocca un punto per i dettagli</div>` : '<p class="mut">Registra almeno una pesata per vedere il grafico.</p>'; };
+const drawW = () => { const cv = $('#wcv'); if (cv) drawChart(cv, wData(), UI.gc.w, ' kg'); };
+document.addEventListener('change', e => {
+  const t = e.target, k = t.dataset && t.dataset.g; if (!k) return;
+  UI.gc[k][t.dataset.f] = t.value;
+  if (t.dataset.f === 'r') { const d = $('#gcc_' + k); if (d) d.hidden = t.value !== 'c'; }
+  if (k === 'ex') G.drawGraph(); else drawW();
+});
+/* ---------- ordine categorie fisso (dall'alto verso il basso) ---------- */
+const CO = ['Chest', 'Back', 'Shoulders', 'Biceps', 'Triceps', 'Forearm', 'Abs', 'Legs', 'Cardio'];
+const reorderCats = () => CATS.sort((a, b) => { const i = CO.indexOf(a), j = CO.indexOf(b); return (i < 0 ? 99 : i) - (j < 0 ? 99 : j); });
+reorderCats();
+const SC = { x: 0 };
+document.addEventListener('scroll', e => { const t = e.target; if (t && t.classList && t.classList.contains('scroll')) SC.x = t.scrollLeft; }, true);
+/* ---------- Corpo: due liste con serie fatte e obiettivo ---------- */
+const vb5 = viewBody;
+G.viewBody = function () {
+  let h = vb5(); const i = h.indexOf('<div class="card"><b>Da allenare</b>'); if (i < 0) return h;
+  const j = h.indexOf('<div class="card"><b>⚖️'), tail = j > i ? h.slice(j) : '';
+  const st = weekStats(UI.wk, UI.period), last = lastTrained(), ms = Object.keys(MUSCLES).filter(m => LIMD[m] || st[m].sets > 0);
+  const row = m => { const [lo, hi] = limOf(m), s = st[m].sets, c = status(s, m).c; return `<div class="setrow"><span>${MUSCLES[m]}${last[m] ? '' : ' <small class="mut">(mai)</small>'}</span><span><b style="color:${c}">${fmtN(s)}</b> / ${lo}<small class="mut"> · obiettivo ${lo}–${hi}</small></span></div>`; };
+  const todo = ms.filter(m => st[m].sets < limOf(m)[0]).sort((a, b) => st[a].sets - st[b].sets), done = ms.filter(m => st[m].sets >= limOf(m)[0]).sort((a, b) => st[b].sets - st[a].sets);
+  return h.slice(0, i) + `<div class="card"><b>Da allenare</b><small class="mut" style="display:block;margin:2px 0 6px">serie fatte / minimo (obiettivo da Altro)</small>${todo.map(row).join('') || 'Tutti i muscoli hanno raggiunto l\'obiettivo 👍'}</div><div class="card"><b>Già allenati</b>${done.map(row).join('') || '<span class="mut">Ancora nessuno.</span>'}</div>` + tail;
+};
+/* ---------- zoom: pochi esercizi, poi "altri" ---------- */
+const mt5 = musTip;
+G.musTip = function (m) {
+  const h = mt5(m), i = h.indexOf('<details'), head = i < 0 ? h : h.slice(0, i), use = {};
+  S.sets.forEach(x => { if (!x.wu) use[x.ex] = (use[x.ex] || 0) + 1; });
+  const ord = (a, b) => (use[b.id] || 0) - (use[a.id] || 0) || alpha(a, b);
+  const pr = allEx().filter(e => (e.p || []).includes(m)).sort(ord), se = allEx().filter(e => (e.s || []).includes(m) && !(e.p || []).includes(m)).sort(ord);
+  const chip = e => `<span class="chip ${use[e.id] ? 'p' : ''}" data-a="open" data-id="${e.id}">${esc(dn(e))}</span>`;
+  const sec = (t, l) => `<div class="lbl">${t}</div><div class="chips wrap">${l.slice(0, 5).map(chip).join('') || '—'}${l.length > 5 ? `<span class="morech" hidden>${l.slice(5).map(chip).join('')}</span><button class="chip o" type="button" data-more="1">＋ altri ${l.length - 5}</button>` : ''}</div>`;
+  return head + sec('Esercizi principali', pr) + sec('Esercizi secondari', se);
+};
+function trimChips() {
+  document.querySelectorAll('#mtip .chips.wrap').forEach(c => {
+    if (c.dataset.trim) return; const ch = [...c.children].filter(x => x.classList.contains('chip') && x.dataset.a === 'open');
+    if (c.querySelector('[data-more]') || ch.length <= 6) return; c.dataset.trim = 1;
+    const sp = document.createElement('span'); sp.className = 'morech'; sp.hidden = true; ch.slice(5).forEach(x => sp.appendChild(x));
+    const b = document.createElement('button'); b.className = 'chip o'; b.type = 'button'; b.dataset.more = 1; b.textContent = '＋ altri ' + (ch.length - 5); c.appendChild(sp); c.appendChild(b);
+  });
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-more]'); if (!b) return; e.stopPropagation();
+  const sp = b.previousElementSibling; if (!sp) return; const open = sp.hidden; sp.hidden = !open;
+  b.textContent = open ? '− meno' : '＋ altri ' + sp.children.length;
+}, true);
+/* ---------- legende nascoste dietro un "ⓘ" ---------- */
+function legendify() {
+  const app = $('#app'); if (!app) return;
+  app.querySelectorAll('.legend, small.mut').forEach(el => {
+    if (el.dataset.lg || !(el.classList.contains('legend') || /^(Colorato =|Pieno =|Serie a settimana:|✓ fatto nel periodo|Pieno = principale)/.test(el.textContent.trim()))) return;
+    el.dataset.lg = 1; el.hidden = true; const b = document.createElement('button'); b.type = 'button'; b.className = 'infob'; b.textContent = 'ⓘ Legenda'; b.dataset.lgb = 1; el.before(b);
+  });
+}
+document.addEventListener('click', e => { const b = e.target.closest('[data-lgb]'); if (!b) return; const el = b.nextElementSibling; if (el) el.hidden = !el.hidden; });
+/* ---------- dopo ogni render ---------- */
+const rn5 = render;
+G.render = function () {
+  rn5();
+  try {
+    reorderCats(); legendify(); trimChips(); drawW();
+    const r = document.querySelector('.chips.scroll');
+    if (r) { r.scrollLeft = SC.x; const s = r.querySelector('.chip.p'); if (s) { const rr = r.getBoundingClientRect(), sr = s.getBoundingClientRect(); if (sr.left < rr.left) r.scrollLeft += sr.left - rr.left - 8; else if (sr.right > rr.right) r.scrollLeft += sr.right - rr.right + 8; SC.x = r.scrollLeft; } }
+  } catch (e) { console.error(e); }
+};
+new MutationObserver(() => { clearTimeout(G._mo5); G._mo5 = setTimeout(() => { try { legendify(); trimChips(); } catch (_) { } }, 30); }).observe(document.body, { childList: true, subtree: true });
 })();
 </script>
