@@ -1853,13 +1853,33 @@ ul.how{margin:6px 0 4px;padding-left:20px;line-height:1.5}ul.how li{margin:3px 0
 button,.chip,.item,.card.tap,.tab{-webkit-tap-highlight-color:transparent}
 .step button:active,#tabbar button:active,.chip:active,.sel-btn:active{transform:scale(.92)}
 .step button,#tabbar button,.sel-btn{transition:transform .08s,background .15s}
-@keyframes pgin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-#app.pg>*{animation:pgin .16s ease-out both}
+#app{overflow-x:clip}
+@keyframes aIn{from{opacity:0;transform:scale(.96) translateY(10px)}to{opacity:1;transform:none}}
+@keyframes aBack{from{opacity:0;transform:scale(1.035)}to{opacity:1;transform:none}}
+@keyframes aTab{from{opacity:0}to{opacity:1}}
+@keyframes aSR{from{opacity:0;transform:translateX(34px)}to{opacity:1;transform:none}}
+@keyframes aSL{from{opacity:0;transform:translateX(-34px)}to{opacity:1;transform:none}}
+#app.pg-in>*{animation:aIn .22s cubic-bezier(.2,.8,.3,1) both}
+#app.pg-back>*{animation:aBack .2s ease-out both}
+#app.pg-tabr>*{animation:aSR .2s ease-out both}
+#app.pg-tabl>*{animation:aSL .2s ease-out both}
+#app.pg-sr>*{animation:aSR .18s ease-out both}
+#app.pg-sl>*{animation:aSL .18s ease-out both}
 @keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.14);color:#7fb0ff}100%{transform:scale(1)}}
 .bump{animation:bump .22s ease-out}
 @keyframes popin{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
 .toast{animation:popin .18s ease-out}
-@media (prefers-reduced-motion:reduce){#app.pg>*,.bump,.toast{animation:none}}
+.prfx{position:fixed;inset:0;pointer-events:none;z-index:9999;display:flex;align-items:center;justify-content:center}
+.prfx i{position:absolute;left:50%;top:42%;width:9px;height:14px;border-radius:2px;background:var(--c);opacity:0;animation:prc 1.3s cubic-bezier(.15,.7,.3,1) var(--dl) forwards}
+@keyframes prc{0%{opacity:1;transform:translate(0,0) rotate(0)}70%{opacity:1}100%{opacity:0;transform:translate(var(--x),calc(var(--y) + 140px)) rotate(var(--r))}}
+.prbadge{position:absolute;top:34%;display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 22px;border-radius:20px;background:rgba(24,28,36,.94);border:1px solid #ffd24a;box-shadow:0 8px 34px rgba(255,210,74,.35);animation:prpop 2.1s cubic-bezier(.2,1.2,.3,1) forwards;text-align:center}
+.prbadge span{font-size:44px;line-height:1;animation:prwig .7s .15s ease-in-out}
+.prbadge b{color:#ffd24a;font-size:15px}
+@keyframes prpop{0%{opacity:0;transform:scale(.5)}14%{opacity:1;transform:scale(1.08)}22%{transform:scale(1)}82%{opacity:1}100%{opacity:0;transform:translateY(-14px) scale(.98)}}
+@keyframes prwig{0%,100%{transform:rotate(0)}25%{transform:rotate(-14deg) scale(1.15)}60%{transform:rotate(12deg) scale(1.15)}}
+.prglow{position:absolute;left:50%;top:42%;width:40px;height:40px;margin:-20px;border-radius:50%;border:3px solid #ffd24a;animation:prring .9s ease-out forwards}
+@keyframes prring{from{opacity:.9;transform:scale(1)}to{opacity:0;transform:scale(9)}}
+@media (prefers-reduced-motion:reduce){#app[class*=pg-]>*,.bump,.toast,.prfx *{animation:none!important}}
 </style>
 <script>
 /* ===== Come farlo bene: impostazione (valori indicativi, adattali al tuo corpo) ===== */
@@ -2936,19 +2956,80 @@ document.addEventListener('click', async e => {
 });
 })();
 
-/* v18: feedback leggero (transizione tra schermate, "bump" sui +/-) */
+/* v18/v19: transizioni dirette in base all'azione + festa per i record */
 (function () {
-  const G = window; let lastK = null, tmr = 0;
-  const key = () => UI.view + '|' + (UI.view === 'ex' ? UI.exId + '|' + UI.tab : '') + (UI.view === 'stats' ? '|' + (UI.sTab || 'w') : '') + (UI.view === 'plans' ? '' : '');
+  const G = window; let prev = null, tmr = 0;
+  const TOP = ['day', 'list', 'cal', 'stats', 'body', 'more'];
+  const depth = v => TOP.includes(v) ? 0 : v === 'edit' ? 2 : 1;
+  const ORD = { tab: ['reg', 'hist', 'graph', 'info'], sTab: ['w', 'r', 'g', 'm'], rT: ['m', 'e', 'i'] };
+  const st = () => ({ v: UI.view, ex: UI.exId, tab: UI.tab, sTab: UI.sTab || 'w', rT: UI.rT || 'm' });
+  const idx = (k, v) => { const o = ORD[k], i = o.indexOf(v); return i < 0 ? 0 : i; };
+  function kind(a, b) {
+    if (a.v !== b.v) {
+      const da = depth(a.v), db = depth(b.v);
+      if (da === 0 && db === 0) return TOP.indexOf(b.v) > TOP.indexOf(a.v) ? 'tabr' : 'tabl';
+      return db > da ? 'in' : db < da ? 'back' : 'in';
+    }
+    if (b.v === 'ex') { if (a.ex !== b.ex) return 'in'; if (a.tab !== b.tab) return idx('tab', b.tab) > idx('tab', a.tab) ? 'sr' : 'sl'; }
+    if (b.v === 'stats') { if (a.sTab !== b.sTab) return idx('sTab', b.sTab) > idx('sTab', a.sTab) ? 'sr' : 'sl'; if (a.rT !== b.rT) return idx('rT', b.rT) > idx('rT', a.rT) ? 'sr' : 'sl'; }
+    return null;
+  }
   const r0 = G.render;
   G.render = function () {
-    const k = key(), ch = lastK !== null && k !== lastK; lastK = k;
+    const n = st(), k = prev ? kind(prev, n) : null; prev = n;
     r0();
-    if (ch) { const a = document.getElementById('app'); if (a) { a.classList.add('pg'); clearTimeout(tmr); tmr = setTimeout(() => a.classList.remove('pg'), 220); } }
+    if (!k) return;
+    const a = document.getElementById('app'); if (!a) return;
+    a.className = a.className.replace(/\bpg-\w+\b/g, '').trim(); void a.offsetWidth;
+    a.classList.add('pg-' + k); clearTimeout(tmr); tmr = setTimeout(() => a.classList.remove('pg-' + k), 300);
   };
   document.addEventListener('click', e => {
     const b = e.target.closest && e.target.closest('[data-a="st"]'); if (!b) return;
     const f = b.dataset.f; setTimeout(() => { const i = document.getElementById(f); if (i) { i.classList.remove('bump'); void i.offsetWidth; i.classList.add('bump'); } }, 0);
   }, true);
+
+  /* ---- record: festa a schermo ---- */
+  function celebrate(lines) {
+    try {
+      document.querySelectorAll('.prfx').forEach(n => n.remove());
+      const o = document.createElement('div'); o.className = 'prfx';
+      const cols = ['#ffd24a', '#ff7a59', '#5ac8fa', '#7fe08a', '#c58bff', '#ff6fa8'];
+      let h = '<div class="prglow"></div>';
+      for (let i = 0; i < 26; i++) { const a = (i / 26) * 6.283 + Math.random() * .4, d = 90 + Math.random() * 130; h += `<i style="--x:${Math.round(Math.cos(a) * d)}px;--y:${Math.round(Math.sin(a) * d - 40)}px;--c:${cols[i % 6]};--r:${Math.round(Math.random() * 540 - 270)}deg;--dl:${Math.round(Math.random() * 90)}ms"></i>`; }
+      h += `<div class="prbadge"><span>🏆</span><b>${lines.map(esc).join('<br>')}</b></div>`;
+      o.innerHTML = h; document.body.appendChild(o); setTimeout(() => o.remove(), 2300);
+      if (typeof hap === 'function') hap([30, 40, 30, 40, 60]);
+    } catch (e) { console.error(e); }
+  }
+  /* record su ogni tipo di serie (peso/ripetizioni, solo ripetizioni, tempo, cardio) */
+  function prKinds(ex, rec) {
+    if (rec.wu) return [];
+    const old = S.sets.filter(x => x.ex === rec.ex && x.id !== rec.id && !x.wu);
+    if (!old.length) return [];
+    const out = [], best = f => old.reduce((m, x) => Math.max(m, f(x) || 0), 0);
+    if (rec.sec != null && rec.sec > 0) {
+      const w = tot(rec); if (w > 0 ? old.some(x => x.sec != null && tot(x) >= w) && rec.sec > best(x => x.sec != null && tot(x) >= w ? x.sec : 0) : rec.sec > best(x => x.sec)) out.push('Record di tempo');
+    } else if (rec.min != null || rec.km != null) {
+      if (rec.km > 0 && rec.km > best(x => x.km)) out.push('Record di distanza');
+      if (rec.min > 0 && rec.min > best(x => x.min)) out.push('Record di durata');
+      if (rec.km > 0 && rec.min > 0) { const p = rec.min / rec.km, ps = old.filter(x => x.km > 0 && x.min > 0).map(x => x.min / x.km); if (ps.length && p < Math.min(...ps) - 1e-6) out.push('Miglior passo'); }
+    } else if (rec.r != null && !(tot(rec) > 0)) {
+      if (rec.r > best(x => x.r)) out.push('Record di ripetizioni');
+    }
+    return out;
+  }
+  const c0 = G.checkRank;
+  G.checkRank = async function (ex, rec, pb) {
+    const r = await c0(ex, rec, pb);
+    try {
+      const L = []; let f = null;
+      try { f = rec.r != null && !rec.wu ? prMap()[rec.id] : null; } catch (_) { }
+      if (f) { if (f.w) L.push('Record di peso'); if (f.v) L.push('Record di volume'); }
+      const k = prKinds(ex, rec); k.forEach(x => L.push(x));
+      if (k.length && !f) toast('🏆 ' + k.join(' · '));
+      if (L.length) celebrate(L);
+    } catch (e) { console.error(e); }
+    return r;
+  };
 })();
 </script>
