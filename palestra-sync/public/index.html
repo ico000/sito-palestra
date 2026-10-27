@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0f1115"><link rel="apple-touch-icon" href="icons/icon-180.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html><head><meta charset=utf8><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0f1115"><link rel="apple-touch-icon" href="icons/icon-180.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}html,body{background:#0f1115}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;color:#e8eaf0}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Palestra Tracker</title>
 <style>
 :root{color-scheme:dark;--bd-base:#262b35;--bd-line:#8a93a6;--bd-off:#454c5c;--bg:#0f1115;--card:#181b22;--card2:#20242d;--line:#2b303b;--tx:#eef1f6;--mut:#8a93a6;--ac:#4c8dff;--ok:#3fb76f;--bad:#e5484d}
@@ -99,7 +99,7 @@ body.timer-on .fab{bottom:calc(132px + env(safe-area-inset-bottom))}
 #pdfv{position:fixed;inset:0;z-index:70;background:#2a2d34;display:flex;flex-direction:column}.pv-top{display:flex;align-items:center;gap:8px;padding:8px 10px;padding-top:calc(8px + env(safe-area-inset-top));background:var(--card)}.pv-top button{font-size:20px;background:var(--card2);border:1px solid var(--line);border-radius:10px;color:var(--tx);padding:6px 14px}.pv-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pv-body{flex:1;overflow:auto;padding:8px;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y pinch-zoom}.pv-body canvas{display:block;margin:0 auto 10px;background:#fff;max-width:none}input.lim{width:56px;margin:0;text-align:center;display:inline-block}
 .chip.o{background:transparent;border-color:#4c8dff;color:#9cc1ff}details.card summary{cursor:pointer}</style>
-<main id="app"></main>
+<main id="app"><div style="padding:80px 20px;text-align:center;color:#8b93a5;font-size:15px">Carico…</div></main>
 <div id="timer" class="hidden"><i></i><span></span></div>
 <nav id="tabbar">
   <button data-v="day" class="on"><b>🏋️</b>Allenamento</button>
@@ -1117,10 +1117,12 @@ function viewPick(){return `<div class="bar"><button data-a="back">‹</button><
 function viewList(){const l=filt();return `<div class="bar"><h2>Esercizi (${l.length})</h2><button data-a="new">+ Nuovo</button></div>${searchBar()}${exLists(l)}`}
 /* schede */
 const WD=['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
-function planned(d){const n=S.sched[parse(d).getDay()],base=(n&&S.plans[n])||[],sk=S.skip[d]||[];return [...new Set([...base.filter(i=>!sk.includes(i)),...(S.extra[d]||[])])].filter(getEx)}
+/* scheda del giorno d: con le settimane alterne (A/B) la settimana B usa S.cfg.schedB */
+function schedOf(d){const dow=parse(d).getDay(),al=S.cfg&&S.cfg.alt;if(al&&al.on&&al.anchor){const w=Math.round((parse(wkStart(d)).getTime()-parse(wkStart(al.anchor)).getTime())/6048e5);if(((w%2)+2)%2===1)return (S.cfg.schedB||{})[dow]}return S.sched[dow]}
+function planned(d){const n=schedOf(d),base=(n&&S.plans[n])||[],sk=S.skip[d]||[];return [...new Set([...base.filter(i=>!sk.includes(i)),...(S.extra[d]||[])])].filter(getEx)}
 async function pickAdd(id){const p=UI.pickFor;UI.pickFor=null;
  if(p.t==='plan'){const l=S.plans[p.n]=S.plans[p.n]||[];if(!l.includes(id))l.push(id);await persist('plans');return go('plans')}
- const d=UI.date,n=S.sched[parse(d).getDay()],pl=n&&S.plans[n];let all=0;
+ const d=UI.date,n=schedOf(d),pl=n&&S.plans[n];let all=0;
  if(pl&&!pl.includes(id)){all=await choice(`Aggiungere "${exName(id)}" solo a questo giorno o alla scheda ${n} per sempre?`,'Solo questo giorno',`Tutti i ${n}`);if(!all)return go('day')}
  if(all===2){pl.push(id);await persist('plans')}else{(S.extra[d]=S.extra[d]||[]).push(id);await persist('extra')}
  go('day')}
@@ -1130,7 +1132,7 @@ function sessBar(d){const i=sessInfo(d),fm=ms=>{const m=Math.round(ms/6e4);retur
  return `<div class="card" style="display:flex;justify-content:space-between;align-items:center"><span>⏱ ${i?(i.run?'In palestra da ':'Durata: ')+fm(i.ms)+(i.m?'':' (primo → ultimo esercizio)'):'Durata allenamento'}</span>${d===today()?(i&&i.run?'<button class="chip p" data-a="sstop">Stop</button>':'<button class="chip" data-a="sstart">Start</button>'):''}</div>`}
 const _vd=viewDay;viewDay=function(){let h=_vd();const d=UI.date;
  h=h.replace(/<div class="card tap" data-a="open" data-id="([^"]+)">/g,(m,id)=>{const e=getEx(id);return `<div class="card tap" style="border-left:5px solid ${e?CATCOL[groupOf(e)]:'#444'}" data-a="open" data-id="${id}">`});
- const done=new Set(S.sets.filter(x=>x.date===d).map(x=>x.ex)),todo=planned(d).filter(i=>!done.has(i)),n=S.sched[parse(d).getDay()],wd=new Date().getDay(),lw=[...S.weights].sort((a,b)=>a.d<b.d?-1:1).pop();
+ const done=new Set(S.sets.filter(x=>x.date===d).map(x=>x.ex)),todo=planned(d).filter(i=>!done.has(i)),n=schedOf(d),wd=new Date().getDay(),lw=[...S.weights].sort((a,b)=>a.d<b.d?-1:1).pop();
  let x=(d===today()&&(wd===0||wd===6)&&!(lw&&daysAgo(lw.d)<=4))?'<div class="banner" data-a="goto" data-v="body">⚖️ È weekend: pesati stamattina appena alzato (a digiuno). Tocca per registrare.</div>':'';
  x+=sessBar(d)+`<div class="row2" style="margin:8px 0"><button class="btn" data-a="impday">📥 Importa esercizi da una scheda</button><button class="btn" data-a="addday">＋ Pianifica un esercizio</button></div><small class="mut" style="display:block;margin-bottom:8px">“Pianifica” aggiunge un esercizio da fare oggi: compare in grigio finché non registri la prima serie. “Importa” aggiunge allo stesso modo tutti gli esercizi di una scheda (es. PULL).</small>`;
  if(todo.length)x+=`<div class="lbl">Da fare${n?' · '+esc(n):''}</div>`+todo.map(id=>{const e=getEx(id);return `<div class="card tap ghost" style="border-left:5px solid ${CATCOL[groupOf(e)]}" data-a="open" data-id="${id}"><b>${esc(dn(e))}</b><small class="mut">${subLabel(e)}</small><button class="gx" data-a="rmplan" data-id="${id}">✕</button></div>`}).join('');
@@ -1192,13 +1194,13 @@ document.addEventListener('click',async ev=>{const t=ev.target.closest('[data-a]
  else if(a==='stab'){UI.sTab=D.v;render()}
  else if(a==='goplans')go('plans',{from:'more'});
  else if(a==='newplan'){const n=await askText('Nome della scheda (es. PULL)');if(n&&!S.plans[n]){S.plans[n]=[];await persist('plans');render()}}
- else if(a==='delplan'){if(await ask(`Eliminare la scheda ${D.n}?`,'Elimina')){delete S.plans[D.n];for(const w in S.sched)if(S.sched[w]===D.n)delete S.sched[w];await persist('plans');await persist('sched');render()}}
+ else if(a==='delplan'){if(await ask(`Eliminare la scheda ${D.n}?`,'Elimina')){delete S.plans[D.n];for(const w in S.sched)if(S.sched[w]===D.n)delete S.sched[w];if(S.cfg.schedB){for(const w in S.cfg.schedB)if(S.cfg.schedB[w]===D.n)delete S.cfg.schedB[w];await persist('cfg')}await persist('plans');await persist('sched');render()}}
  else if(a==='sched'){if(S.sched[D.w]===D.n)delete S.sched[D.w];else S.sched[D.w]=D.n;await persist('sched');render()}
  else if(a==='plrm'){S.plans[D.n]=S.plans[D.n].filter(i=>i!==D.id);await persist('plans');render()}
  else if(a==='pladd'){UI.pickFor={t:'plan',n:D.n};go('pick',{filter:'',group:'Tutti',from:'more'})}
  else if(a==='addday'){UI.pickFor={t:'day'};go('pick',{filter:'',group:'Tutti',from:'day'})}
  else if(a==='impday'){const ns=Object.keys(S.plans);if(!ns.length)return toast('Crea prima una scheda in Altro → Schede');const i=await menu('Importa gli esercizi di quale scheda?',ns);if(!i)return;const d=UI.date,cur=planned(d);S.extra[d]=[...(S.extra[d]||[]),...S.plans[ns[i-1]].filter(x=>!cur.includes(x))];S.skip[d]=(S.skip[d]||[]).filter(x=>!S.plans[ns[i-1]].includes(x));await persist('extra');await persist('skip');render()}
- else if(a==='rmplan'){const id=D.id,d=UI.date,n=S.sched[parse(d).getDay()],pl=n&&S.plans[n];
+ else if(a==='rmplan'){const id=D.id,d=UI.date,n=schedOf(d),pl=n&&S.plans[n];
   if(pl&&pl.includes(id)){const c=await choice(`Eliminare "${exName(id)}" solo per questo giorno o da tutti i ${n}?`,'Solo questo giorno','Per tutti');if(!c)return;if(c===2){S.plans[n]=pl.filter(x=>x!==id);await persist('plans')}else{(S.skip[d]=S.skip[d]||[]).push(id);await persist('skip')}}
   S.extra[d]=(S.extra[d]||[]).filter(x=>x!==id);await persist('extra');render()}
  else if(a==='sstart'){S.sess[today()]={s:Date.now()};await persist('sess');render()}
@@ -1347,7 +1349,7 @@ function recapFig(ds,col){const M=UI.rcM||'f';let fc=col,leg='Pieno = muscolo pr
 async function pickAdd(id){const p=UI.pickFor;UI.pickFor=null;
  if(p.t==='ref'){const v=num(await askText(`Mediana (Top 50%) di "${exName(id)}": 1RM ÷ peso corporeo (es. 0.8)`));if(v>0){S.cfg.xref=Object.assign(S.cfg.xref||{},{[id]:v});EXREF[id]=v;await persist('cfg')}UI.sTab='r';UI.rT='i';return go('stats')}
  if(p.t==='plan'){const l=S.plans[p.n]=S.plans[p.n]||[];if(!l.includes(id))l.push(id);await persist('plans');return go('plans')}
- const d=UI.date,n=S.sched[parse(d).getDay()],pl=n&&S.plans[n];let all=0;
+ const d=UI.date,n=schedOf(d),pl=n&&S.plans[n];let all=0;
  if(pl&&!pl.includes(id)){all=await choice(`Aggiungere "${exName(id)}" solo a questo giorno o alla scheda ${n} per sempre?`,'Solo questo giorno',`Tutti i ${n}`);if(!all)return go('day')}
  if(all===2){pl.push(id);await persist('plans')}else{(S.extra[d]=S.extra[d]||[]).push(id);await persist('extra')}go('day')}
 document.addEventListener('change',ev=>{const t=ev.target;if(t.id==='r0'||t.id==='r1'){UI[t.id]=t.value;applyRange();render()}});
@@ -1657,7 +1659,7 @@ exReg=function(ex){const ty=ex.type||'wr';return _er(ex).replace(/<div class="ca
 /* --- giornata: ordine, grigi e colorati nello stesso elenco --- */
 function dOrder(d){const sets=S.sets.filter(x=>x.date===d),done=[];sets.forEach(x=>{if(!done.includes(x.ex))done.push(x.ex)});const pl=planned(d),base=[...pl,...done.filter(i=>!pl.includes(i))].filter(getEx),o=(S.order||{})[d];return{sets,done:new Set(done),ids:o?[...o.filter(i=>base.includes(i)),...base.filter(i=>!o.includes(i))]:base}}
 function pdfChip(){return `<div class="chips"><button class="chip" data-a="pdfopen">📄 Scheda PDF</button></div>`}
-viewDay=function(){const d=UI.date,{sets,done,ids}=dOrder(d),label=d===today()?'Oggi':(d===addDays(today(),-1)?'Ieri':fmtDate(d)),wd=new Date().getDay(),lw=[...S.weights].sort((a,b)=>a.d<b.d?-1:1).pop(),dm=dayMap([])[d],n=S.sched[parse(d).getDay()];
+viewDay=function(){const d=UI.date,{sets,done,ids}=dOrder(d),label=d===today()?'Oggi':(d===addDays(today(),-1)?'Ieri':fmtDate(d)),wd=new Date().getDay(),lw=[...S.weights].sort((a,b)=>a.d<b.d?-1:1).pop(),dm=dayMap([])[d],n=schedOf(d);
  let h=`<div class="nav"><button data-a="day" data-d="-1">‹</button><div>${label}<small>${fmtShort(d)} ${d.slice(0,4)}</small></div><button data-a="day" data-d="1">›</button></div><div class="datebar"><input type="date" id="dpick" value="${d}">${d!==today()?'<button class="chip" data-a="today">Oggi</button>':''}</div>`;
  const dl=d===today()?deloadMsg():'';if(dl)h+=`<div class="banner" data-a="dlsnooze">${dl}</div>`;
  if(backupDue())h+=`<div class="banner" data-a="goto" data-v="more">⚠️ Backup non fatto da un po'. Tocca per farlo.</div>`;
@@ -1682,7 +1684,7 @@ function stretchCard(d){const P=stretchPlan(d);if(!P.items.length)return'';if(!U
 const ST={items:[],i:0,r:1,left:0,run:false,done:false,iv:null,wl:null};
 function stBeep(){try{const a=new (window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=880;g.gain.value=.15;o.start();setTimeout(()=>{o.stop();a.close()},350)}catch(_){}}
 function stRender(){const o=document.getElementById('stplayer');if(!o)return;const s=ST.items[ST.i],mm=Math.floor(ST.left/60),ss=String(ST.left%60).padStart(2,'0');
- o.innerHTML=`<div class="stp"><div class="stp-top"><button data-a="stx">✕</button><span>${ST.i+1} / ${ST.items.length}</span><span></span></div><div class="stp-body"><div class="lbl">${s.walk?'Defaticamento':DBL[s.g]}</div><h2>${esc(s.n)}</h2>${s.i.length?`<div class="thumbs big">${s.i.map(u=>`<img src="${u}" alt="">`).join('')}</div>`:''}<div class="stp-round">${s.rounds>1?`Giro ${ST.r} di ${s.rounds}${ST.r<s.rounds?' (poi cambia lato)':''}`:'&nbsp;'}</div><div class="stp-time">${ST.done?'Fatto ✓':mm+':'+ss}</div></div><div class="stp-ctl"><button data-a="stprev">◀</button><button class="main" data-a="stplay">${ST.run?'⏸':'▶'}</button><button data-a="streset">↺</button><button data-a="stnext">▶▶</button></div></div>`}
+ o.innerHTML=`<div class="stp"><div class="stp-top"><button data-a="stx">✕</button><span>${ST.i+1} / ${ST.items.length}</span><span></span></div><div class="stp-body"><div class="lbl">${s.walk?'Defaticamento':DBL[s.g]}</div><h2>${esc(s.n)}</h2>${s.i.length?`<div class="thumbs big">${s.i.map(u=>`<img src="${u}" alt="">`).join('')}</div>`:''}<div class="stp-round">${s.rounds>1?`Giro ${ST.r} di ${s.rounds}${ST.r<s.rounds?((S.cfg.stOpt&&S.cfg.stOpt.auto)?' (poi cambia lato, parte subito)':' (poi cambia lato)'):''}`:'&nbsp;'}</div><div class="stp-time">${ST.done?'Fatto ✓':mm+':'+ss}</div></div><div class="stp-ctl"><button data-a="stprev">◀</button><button class="main" data-a="stplay">${ST.run?'⏸':'▶'}</button><button data-a="streset">↺</button><button data-a="stnext">▶▶</button></div></div>`}
 function stGo(i){clearInterval(ST.iv);ST.run=false;ST.done=false;ST.i=i;ST.r=1;ST.left=ST.items[i].sec;stRender()}
 function stTick(){if(!ST.run)return;ST.left--;if(ST.left<=0){const s=ST.items[ST.i];stBeep();if(navigator.vibrate)try{navigator.vibrate([200,100,200])}catch(_){}if(ST.r<s.rounds){ST.r++;ST.left=s.sec;ST.run=false;clearInterval(ST.iv)}else{ST.left=0;ST.done=true;ST.run=false;clearInterval(ST.iv)}}stRender()}
 function stClose(){clearInterval(ST.iv);ST.run=false;const o=document.getElementById('stplayer');if(o)o.remove();try{ST.wl&&ST.wl.release()}catch(_){}ST.wl=null}
@@ -1843,6 +1845,21 @@ ul.how{margin:6px 0 4px;padding-left:20px;line-height:1.5}ul.how li{margin:3px 0
 .infob{background:var(--card2);color:var(--mut);border-radius:14px;padding:4px 10px;font-size:12px;margin:2px 0 8px}
 .gctl{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.gctl select,.gctl input{flex:1;min-width:110px;margin:0}
 #tm_ex{width:100%}
+/* v17 */
+.card.tap.ghost>.rb{right:50px!important}
+.card.tap>.rb{right:8px}
+.card.ghost>.rb .dh{padding:6px 10px}
+/* v18: micro-animazioni */
+button,.chip,.item,.card.tap,.tab{-webkit-tap-highlight-color:transparent}
+.step button:active,#tabbar button:active,.chip:active,.sel-btn:active{transform:scale(.92)}
+.step button,#tabbar button,.sel-btn{transition:transform .08s,background .15s}
+@keyframes pgin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+#app.pg>*{animation:pgin .16s ease-out both}
+@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.14);color:#7fb0ff}100%{transform:scale(1)}}
+.bump{animation:bump .22s ease-out}
+@keyframes popin{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+.toast{animation:popin .18s ease-out}
+@media (prefers-reduced-motion:reduce){#app.pg>*,.bump,.toast{animation:none}}
 </style>
 <script>
 /* ===== Come farlo bene: impostazione (valori indicativi, adattali al tuo corpo) ===== */
@@ -1865,7 +1882,7 @@ const HOWTO = {
   'dumbell-shoulder-press': 'Schienale a 75–90°|Manubri all\'altezza delle spalle, avambracci verticali|Spingi senza sbattere i manubri in cima',
   'front-dumbbell-raise': 'In piedi, busto dritto, gomiti leggermente flessi|Sali fino all\'altezza delle spalle (max 90°)',
   'hammer-strength-shoulder-press': 'Regola il sedile: maniglie all\'altezza delle spalle/clavicole|Schiena appoggiata, gomiti sotto i polsi',
-  'lateral-dumbbell-raise': 'In piedi, leggera inclinazione in avanti (10–15°)|Gomiti leggermente flessi (15–20°)|Sali fino a circa 90° (altezza delle spalle): è il range studiato; salire oltre non serve',
+  'lateral-dumbbell-raise': 'In piedi, leggera inclinazione in avanti (10–15°)|Gomiti leggermente flessi (15–20°)|Sali fino a circa 90° (altezza delle spalle): è una convenzione, il range usato negli studi|Rotazione: con la mano ruotata verso il basso (come versare una brocca) lavorano di più deltoide posteriore, tricipite e trapezio alto; con il pollice in alto più deltoide anteriore e mediale (Coratella e coll.)',
   'lateral-machine-raise': 'Regola il sedile: asse della leva allineato alla spalla|Cuscinetti appoggiati sopra i gomiti|Sali fino a spalla, senza alzare il trapezio',
   'log-press': 'Piedi larghi quanto le spalle, addome e glutei contratti|Porta il log alle clavicole, poi spingi sopra la testa',
   'one-arm-standing-dumbbell-press': 'Piedi larghi quanto le spalle, addome e glutei contratti|Manubrio alla spalla, non inarcare la schiena',
@@ -1886,8 +1903,8 @@ const HOWTO = {
   'glute-ham-raise': 'Ginocchia appena dietro il cuscino, caviglie bloccate|Il tronco scende fino a parallelo al suolo|Risali spingendo con i femorali, senza inarcare la schiena',
   'hack-squat': 'Schiena e spalle appoggiate|Piedi sulla pedana ad altezza media, larghezza spalle, punte 15–30° fuori|Scendi almeno a 90° senza staccare il bacino',
   'hip-trust-machine': 'Scapole inferiori contro il bordo, piedi larghi quanto le anche|Tibie verticali in cima, mento leggermente verso il petto|Non iperestendere la zona lombare',
-  'leg-extension-machine': 'Schienale regolato: ginocchia allineate all\'asse della macchina|Cuscinetto sulla parte bassa della tibia (appena sopra le caviglie)|Parti da circa 90° e non bloccare i ginocchi con rimbalzi',
-  'leg-press': 'Schiena e bacino appoggiati, piedi larghi quanto le spalle, altezza media|Ginocchia che seguono la direzione delle punte|Scendi fino a circa 90° senza staccare il bacino, non bloccare i ginocchi in cima',
+  'leg-extension-machine': 'Schienale regolato: ginocchia allineate all\'asse della macchina|Cuscinetto sulla parte bassa della tibia (appena sopra le caviglie)|Parti da circa 90° e non bloccare i ginocchi con rimbalzi|Se lo schienale si reclina, reclinalo (anca a ~40° invece di 90°): il retto femorale cresce di più (Larsen e coll.), il vasto laterale uguale',
+  'leg-press': 'Schiena e bacino appoggiati, piedi larghi quanto le spalle, altezza media|Ginocchia che seguono la direzione delle punte|Scendi fino a circa 90° senza staccare il bacino, non bloccare i ginocchi in cima|Il range completo non è obbligatorio: anche le parziali in allungamento danno risultati simili (Wolf 2023); il segnale d\'allarme resta il bacino che si stacca',
   'lying-leg-curl-machine': 'Ginocchia appena oltre il bordo della panca, asse in linea con le ginocchia|Cuscinetto sopra i talloni|Bacino appoggiato, non staccarlo mentre fletti|Il leg curl da seduto ha mostrato più crescita: abbinalo a stacco rumeno se usi questo',
   'romanian-deadlift': 'Piedi larghi quanto le anche, barra vicino alle cosce|Ginocchia leggermente flesse (15–20°), spingi i fianchi indietro|La barra scende fino a metà tibia/sotto il ginocchio con schiena neutra',
   'seated-calf-raise-machine': 'Cuscino sulle cosce vicino alle ginocchia|Punte sul bordo, scendi fino al tallone completo|Allena soprattutto il soleo (ginocchio flesso); per i gastrocnemi è meglio il calf in piedi|Sali sull\'avampiede senza rimbalzi',
@@ -1917,13 +1934,13 @@ const HOWTO = {
   'straight-arm-cable-pushdown': 'Puleggia alta, busto inclinato in avanti di 20–30°|Braccia quasi tese, porta la barra/corda fino alle cosce',
   't-bar-row': 'Piedi larghi quanto le spalle, busto inclinato 30–45°, ginocchia flesse|Tira la maniglia verso alto addome/basso petto',
   /* Cardio */
-  'cycling': 'Sellino all\'altezza dell\'anca: ginocchio leggermente flesso (25–35°) in basso|Pedala a 80–100 giri/minuto',
+  'cycling': 'Sella: con il pedale in basso (ore 6) e le scarpe, ginocchio flesso 25–35° da fermo (in pedalata 33–43°)|Pedala a 80–100 giri/minuto',
   'dead-hang': 'Presa prona larga quanto le spalle|Spalle attive (non "molli"), piedi sollevati',
   'elliptical-trainer': 'Postura eretta, ginocchia morbide|Mani sulle maniglie senza appoggiarti col peso',
   'rowing-machine': 'Pedana regolata a metà piede, cinghie sul metatarso|Sequenza: gambe, busto, braccia (e poi al contrario)|Schiena neutra',
-  'running-outdoor': 'Cadenza indicativa 160–180 passi al minuto|Busto leggermente avanti, passo sotto il corpo',
+  'running-outdoor': 'Cadenza: aumenta del 5–10% quella che hai di solito (già +5% riduce il carico sul ginocchio; oltre il 10% costa più ossigeno, Heiderscheit 2011)|Busto leggermente avanti, passo sotto il corpo',
   'running-treadmill': 'Inclinazione 1% alle velocità di corsa normali per simulare l\'esterno (a velocità molto basse 0% e 1% sono equivalenti)|Non aggrapparti alle maniglie',
-  'stationary-bike': 'Sellino all\'altezza dell\'anca: ginocchio leggermente flesso (25–35°) in basso',
+  'stationary-bike': 'Sella: con il pedale in basso (ore 6) e le scarpe, ginocchio flesso 25–35° da fermo (in pedalata 33–43°)',
   'swimming': 'Respira ritmicamente, alterna gli stili|Pausa breve tra le vasche',
   'walking': 'Passo naturale, circa 5–6 km/h: per la maggior parte degli adulti è già intensità moderata (per un lavoro davvero leggero vai più piano)',
   /* Addominali */
@@ -1940,12 +1957,12 @@ const HOWTO = {
   /* Petto */
   'cable-crossover': 'Pulegge alte, un passo avanti e busto inclinato 10–20°|Gomiti leggermente flessi, porta le mani verso il centro/anche',
   'chest-press': 'Regola il sedile: maniglie all\'altezza del petto (circa capezzoli)|Schiena appoggiata, scapole addotte|Non bloccare i gomiti in cima',
-  'decline-barbell-bench-press': 'Panca declinata 15–30°, piedi bloccati|Presa larga circa 1,2–1,5 volte le spalle|La barra scende al basso petto',
+  'decline-barbell-bench-press': 'Panca declinata 15–30°, piedi bloccati|Presa larga 1–1,5 volte le spalle|La barra scende al basso petto',
   'decline-hammer-strength-chest-press': 'Regola il sedile: maniglie sotto la linea del petto|Schiena appoggiata, gomiti a 45–60°',
-  'flat-barbell-bench-press': 'Occhi sotto la barra, scapole addotte e depresse|Presa circa 1,2–1,5 volte la larghezza delle spalle (avambracci verticali in basso)|Piedi a terra, barra al centro del petto (linea capezzoli)|Gomiti a 45–60° dal busto',
+  'flat-barbell-bench-press': 'Occhi sotto la barra, scapole addotte e depresse|Presa 1–1,5 volte la larghezza delle spalle (avambracci verticali in basso)|Piedi a terra, barra al centro del petto (linea capezzoli)|Gomiti a 45–60° dal busto',
   'flat-dumbbell-bench-press': 'Panca piana, scapole addotte|Manubri all\'altezza del petto, gomiti a 45–60° dal busto',
   'flat-dumbbell-fly': 'Gomiti leggermente flessi e fermi|Scendi finché senti allungamento del petto, senza oltre la linea delle spalle',
-  'incline-barbell-bench-press': 'Panca inclinata 30–45° (di solito 30° è un buon compromesso)|Barra verso clavicole/alto petto|Presa circa 1,2–1,5 volte le spalle',
+  'incline-barbell-bench-press': 'Panca inclinata 30–45° (di solito 30° è un buon compromesso)|Barra verso clavicole/alto petto|Presa 1–1,5 volte le spalle',
   'incline-dumbbell-bench-press': 'Panca inclinata 30° (massimo 45°)|Manubri all\'altezza dell\'alto petto, gomiti a 45–60°',
   'incline-dumbbell-fly': 'Panca inclinata 20–30°|Gomiti leggermente flessi, allunga il petto senza forzare',
   'incline-hammer-strength-chest-press': 'Regola il sedile: maniglie all\'altezza dell\'alto petto|Schiena appoggiata, scapole addotte',
@@ -1975,7 +1992,9 @@ const HOWTO = {
 const G = window;
 /* immagini incluse: caricate a parte (file imgdata.js) per aprire l'app più in fretta */
 G.IMGREADY = new Promise(res => { if (G.IMGLOADED) res(); else G.addEventListener('imgdata', () => res(), { once: true }); });
-if (!G.IMGLOADED) { const sc = document.createElement('script'); sc.src = 'imgdata.js'; sc.async = true; document.head.appendChild(sc); }
+G.loadImg = () => { if (G.IMGLOADED || G._imgReq) return; G._imgReq = 1; const sc = document.createElement('script'); sc.src = 'imgdata.js'; sc.async = true; document.head.appendChild(sc); };
+// le immagini (3 MB) si caricano dopo che l'app è già utilizzabile: l'avvio su telefoni lenti resta leggero
+if (!G.IMGLOADED) { const go = () => setTimeout(G.loadImg, 1500); if (document.readyState === 'complete') go(); else addEventListener('load', go, { once: true }); }
 const hap = p => { try { navigator.vibrate && navigator.vibrate(p); } catch (_) { } };
 G.hap = hap;
 
@@ -2012,7 +2031,7 @@ function effT(x) {
   return d ? { at: d.at || 'none', tw: d.tw || 0, tf: d.tf == null ? 1 : d.tf, vw: d.vw || 0 } : NO_T;
 }
 /* carico totale effettivo: usato da record, classifica, 1RM, grafici */
-function tot(x) { const t = effT(x); return ((x.w || 0) + t.tw) * t.tf + t.vw; }
+function tot(x) { const t = effT(x); return ((x.w || 0) + t.tw) * t.tf + t.vw + (x.bwk || 0); }
 G.tot = tot; G.effT = effT;
 
 /* icone */
@@ -2041,6 +2060,7 @@ const tChip = x => {
   const e = effT(x), o = [];
   if (e.at && e.at !== 'none') { const t = getTool(e.at); o.push(`<span class="tl" title="${esc(tLine(e))}">${tIcon(t)}<i>${t.k === 'cable' ? facTxt(e.tf) : (e.tw ? '+' + fmtN(e.tw) : '')}</i></span>`); }
   if (e.vw > 0) o.push(`<span class="tl" title="Zavorra">${tIcon(VEST)}<i>+${fmtN(e.vw)}</i></span>`);
+  if (x.bwk > 0) o.push(`<span class="tl" title="Peso corporeo aggiunto automaticamente"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="3" fill="#8a93a6"/><path d="M6 21v-8l-2-3 3-2h10l3 2-2 3v8h-3v-6h-6v6z" fill="#8a93a6"/></svg><i>PC ${fmtN(x.bwk)}</i></span>`);
   return o.join('');
 };
 G.tChip = tChip;
@@ -2122,7 +2142,23 @@ G.recView = function () {
 /* ---------- tasto di salvataggio: aggiunge i campi attrezzo ---------- */
 const TLAST = { v: {} };
 (async () => { for (let i = 0; i < 100 && !DB.db; i++) await new Promise(r => setTimeout(r, 50)); try { TLAST.v = (await DB.get('toollast')) || {}; } catch (_) { } })();
+/* peso corporeo automatico (trazioni, dip, flessioni…): il campo kg diventa il sovraccarico, il peso corporeo si somma da solo */
+const BWAUTO = /^(pull-up|chin-up|neutral-chin-up|parallel-bar-triceps-dip|ring-dip)$/;
+const bwCfg = id => { const c = (S.cfg.exBw || {})[id]; return c ? { on: !!c.on, p: c.p > 0 ? c.p : 100 } : { on: BWAUTO.test(id), p: 100 }; };
+const bwAt = d => { const all = [...S.weights].sort((a, b) => a.d < b.d ? -1 : 1); if (!all.length) return 0; let r = null; all.forEach(w => { if (w.d <= d) r = w; }); return (r || all[0]).kg; };
+G.bwCfg = bwCfg;
 G.toolFields = function (ex, ty) {
+  const bo = bwFields(ex, ty);
+  return Object.assign(toolFields0(ex, ty), bo);
+};
+function bwFields(ex, ty) {
+  if (ty === 'cardio') return {};
+  const c = bwCfg(ex.id); if (!c.on) return {};
+  if (UI.editId) { const x = S.sets.find(y => y.id === UI.editId); if (x && x.bwk > 0) return { bwk: x.bwk }; }
+  const k = bwAt(UI.date); if (!(k > 0)) { toast('Per il peso corporeo automatico registra prima il tuo peso (tab Corpo)'); return {}; }
+  return { bwk: Math.round(k * c.p) / 100 };
+}
+function toolFields0(ex, ty) {
   if (ty === 'cardio' || !UI.tsel) return {};
   const s = UI.tsel, t = getTool(s.at), none = s.at === 'none' || !s.at;
   const tw = $('#tw') ? num($('#tw').value) : s.tw, vw = $('#vw') ? num($('#vw').value) : s.vw, def = (S.cfg.exTool || {})[ex.id], o = {};
@@ -2150,16 +2186,18 @@ function tselSet(id) {
 }
 function ttotHtml() {
   const s = UI.tsel || NO_T, w = $('#w') ? num($('#w').value) : 0, tw = $('#tw') ? num($('#tw').value) : s.tw, vw = $('#vw') ? num($('#vw').value) : s.vw;
-  if (s.at === 'none' && !(vw > 0)) return '';
-  const total = (w + (s.at === 'none' ? 0 : tw)) * (s.tf == null ? 1 : s.tf) + vw;
-  const tl = tLine({ at: s.at, tw, tf: s.tf, vw });
+  if (s.at === 'none' && !(vw > 0) && !(UI.exId && bwCfg(UI.exId).on)) return '';
+  const bcf = UI.exId ? bwCfg(UI.exId) : { on: false, p: 100 }, bk = bcf.on ? bwAt(UI.date) * bcf.p / 100 : 0;
+  const total = (w + (s.at === 'none' ? 0 : tw)) * (s.tf == null ? 1 : s.tf) + vw + bk;
+  const tl = tLine({ at: s.at, tw, tf: s.tf, vw }) + (bk ? ((tLine({ at: s.at, tw, tf: s.tf, vw }) ? ' · ' : '') + 'peso corporeo +' + fmtN(bk) + ' kg') : '');
   return `Carico totale: <b>${fmtN(total)} kg</b>${tl ? ` <span class="mut">(${fmtN(w)} kg inseriti + ${esc(tl)})</span>` : ''}`;
 }
 function toolCard(ex) {
   tselInit(ex); const s = UI.tsel, t = getTool(s.at);
-  const showTw = s.at !== 'none' && t.k !== 'cable', vOpen = s.vw > 0 || UI.vestOpen;
-  return `<div class="tcard slim" id="tcard"><div class="trw"><span class="mut small">Attrezzo</span><button class="chip o" data-a="tpick">${tIcon(t)} ${esc(t.n)}${t.k === 'cable' ? ' · ' + facTxt(s.tf) : ''} ▾</button>${showTw ? `<span class="twb"><input class="txt tw" id="tw" inputmode="decimal" value="${fmtN(s.tw)}" aria-label="Peso dell'attrezzo in kg"> kg</span>` : ''}<button class="chip" data-a="tvest">${vOpen ? '−' : '＋'} zavorra</button><button class="link2" data-a="tgo">serie passate</button></div>
+  const showTw = s.at !== 'none' && t.k !== 'cable', vOpen = s.vw > 0 || UI.vestOpen, bc = bwCfg(ex.id), bk = bwAt(UI.date);
+  return `<div class="tcard slim" id="tcard"><div class="trw"><span class="mut small">Attrezzo</span><button class="chip o" data-a="tpick">${tIcon(t)} ${esc(t.n)}${t.k === 'cable' ? ' · ' + facTxt(s.tf) : ''} ▾</button>${showTw ? `<span class="twb"><input class="txt tw" id="tw" inputmode="decimal" value="${fmtN(s.tw)}" aria-label="Peso dell'attrezzo in kg"> kg</span>` : ''}<button class="chip" data-a="tvest">${vOpen ? '−' : '＋'} zavorra</button><button class="chip ${bc.on ? 'p' : ''}" data-a="tbw">${bc.on ? '✓ ' : ''}peso corporeo</button><button class="link2" data-a="tgo">serie passate</button></div>
   ${vOpen ? `<div class="trw"><input class="txt tw" id="vw" inputmode="decimal" placeholder="kg zavorra" value="${s.vw ? fmtN(s.vw) : ''}"><span class="mut small">kg addosso (giacca, cintura)</span></div>` : ''}
+  ${bc.on ? `<div class="trw"><span class="mut small">Peso corporeo: ${bk ? fmtN(bk * bc.p / 100) + ' kg (' + bc.p + '% di ' + fmtN(bk) + ')' : 'registra prima il tuo peso nel tab Corpo'} si somma da solo. Nel campo kg scrivi solo il sovraccarico (0 se nessuno).</span><button class="link2" data-a="tbwp">% usata</button></div>` : ''}
   <div class="ttot" id="ttot">${ttotHtml()}</div></div>`;
 }
 G.ttotHtmlG = ttotHtml;
@@ -2190,6 +2228,8 @@ document.addEventListener('click', async e => {
   if (e.target.closest('.step button')) setTimeout(refreshTot, 0);
   const t = e.target.closest('[data-a]'); if (!t) return; const a = t.dataset.a;
   if (a === 'tpick') { const all = toolAll(), i = await toolSheet(all, UI.tsel.at); if (i >= 0) { tselSet(all[i].id); refreshToolCard(); } }
+  else if (a === 'tbw') { const c = bwCfg(UI.exId); S.cfg.exBw = Object.assign({}, S.cfg.exBw || {}, { [UI.exId]: { on: !c.on, p: c.p } }); await persist('cfg'); refreshToolCard(); }
+  else if (a === 'tbwp') { const c = bwCfg(UI.exId), v = num(await askText('Quale percentuale del peso corporeo sposti in questo esercizio? (trazioni e dip ≈ 100, flessioni circa 65: valore di convenzione)', String(c.p))); if (v > 0 && v <= 150) { S.cfg.exBw = Object.assign({}, S.cfg.exBw || {}, { [UI.exId]: { on: c.on, p: v } }); await persist('cfg'); refreshToolCard(); } }
   else if (a === 'tvest') { UI.vestOpen = !UI.vestOpen; if (!UI.vestOpen && UI.tsel) UI.tsel.vw = 0; refreshToolCard(); }
   else if (a === 'tgo') { UI.tm = Object.assign(UI.tm || {}, { ex: UI.exId }); go('tools', { from: 'more' }); }
 });
@@ -2418,7 +2458,7 @@ UI.ph = {};
 G.loadPhotos = async function (id) {
   let l = await DB.get('ph2:' + id);
   if (!Array.isArray(l)) {
-    if (!G.IMGLOADED) await Promise.race([G.IMGREADY, new Promise(r => setTimeout(r, 4000))]);
+    if (!G.IMGLOADED) G.loadImg(); if (!G.IMGLOADED) await Promise.race([G.IMGREADY, new Promise(r => setTimeout(r, 4000))]);
     l = []; const names = ['Partenza', 'Metà', 'Fine'];
     for (let i = 0; i < 3; i++) {
       const p = await DB.get(`photo:${id}:${i}`), d = typeof IMGD !== 'undefined' && IMGD[id] && (i === 0 ? IMGD[id][0] : i === 2 ? IMGD[id][1] : null), u = p || d;
@@ -2527,10 +2567,22 @@ window.addEventListener('scroll', () => {
 
 /* ---------- Schede: riordino con drag & drop (solo dentro la stessa scheda) ---------- */
 G.viewPlans = function () {
-  const names = Object.keys(S.plans);
-  return `<div class="bar"><button data-a="back">‹</button><h2>Schede</h2><button data-a="newplan">+ Nuova</button></div><p class="mut small">Nei giorni assegnati gli esercizi compaiono in grigio e si colorano quando li registri. Per riordinare tieni premuto ⠿ e trascina.</p>` +
-    (names.map(n => `<div class="card"><div class="mhead"><b>${esc(n)}</b><button class="link" data-a="delplan" data-n="${esc(n)}">Elimina</button></div><div class="chips">${[1, 2, 3, 4, 5, 6, 0].map(w => `<button class="chip ${S.sched[w] === n ? 'p' : ''}" data-a="sched" data-w="${w}" data-n="${esc(n)}">${WD[w]}</button>`).join('')}</div><div class="dndlist" data-dndc="plan" data-n="${esc(n)}">${S.plans[n].map(id => `<div class="setrow dnd" data-dnd="${esc(id)}"><span class="dh" title="Trascina">⠿</span><span class="grow">${esc(exName(id))}</span><button class="x" data-a="plrm" data-n="${esc(n)}" data-id="${esc(id)}">✕</button></div>`).join('')}</div><button class="btn" data-a="pladd" data-n="${esc(n)}">+ Esercizio</button></div>`).join('') || '<div class="empty">Nessuna scheda. Creane una con “+ Nuova” (es. PULL).</div>');
+  const names = Object.keys(S.plans), al = S.cfg.alt && S.cfg.alt.on, B = S.cfg.schedB || {};
+  const curB = al && (Math.round((parse(wkStart(today())).getTime() - parse(wkStart(S.cfg.alt.anchor)).getTime()) / 6048e5) % 2 + 2) % 2 === 1;
+  const altCard = `<div class="card"><b>Settimane alterne</b><p class="mut small">${al ? 'Attive: ogni scheda ha due righe di giorni, A per le settimane di tipo A e B per quelle di tipo B. Questa settimana è di tipo <b>' + (curB ? 'B' : 'A') + '</b>.' : 'Se la tua scheda cambia a settimane alterne (settimana 1 / settimana 2), attivale: potrai scegliere i giorni di ogni scheda separatamente per le due settimane.'}</p><div class="chips"><button class="chip ${al ? 'p' : ''}" data-a="altw">${al ? '✓ Attive' : 'Attiva'}</button>${al ? '<button class="chip" data-a="altswap">Scambia A/B questa settimana</button>' : ''}</div></div>`;
+  const chips = (n, w, set, key) => `<button class="chip ${set[w] === n ? 'p' : ''}" data-a="${key}" data-w="${w}" data-n="${esc(n)}">${WD[w]}</button>`;
+  return `<div class="bar"><button data-a="back">‹</button><h2>Schede</h2><button data-a="newplan">+ Nuova</button></div><p class="mut small">Nei giorni assegnati gli esercizi compaiono in grigio e si colorano quando li registri. Per riordinare tieni premuto ⠿ e trascina.</p>` + altCard +
+    (names.map(n => `<div class="card"><div class="mhead"><b>${esc(n)}</b><button class="link" data-a="delplan" data-n="${esc(n)}">Elimina</button></div>${al ? '<small class="mut">Settimana A</small>' : ''}<div class="chips">${[1, 2, 3, 4, 5, 6, 0].map(w => chips(n, w, S.sched, 'sched')).join('')}</div>${al ? `<small class="mut">Settimana B</small><div class="chips">${[1, 2, 3, 4, 5, 6, 0].map(w => chips(n, w, B, 'schedb')).join('')}</div>` : ''}<div class="dndlist" data-dndc="plan" data-n="${esc(n)}">${S.plans[n].map(id => `<div class="setrow dnd" data-dnd="${esc(id)}"><span class="dh" title="Trascina">⠿</span><span class="grow">${esc(exName(id))}</span><button class="x" data-a="plrm" data-n="${esc(n)}" data-id="${esc(id)}">✕</button></div>`).join('')}</div><button class="btn" data-a="pladd" data-n="${esc(n)}">+ Esercizio</button></div>`).join('') || '<div class="empty">Nessuna scheda. Creane una con “+ Nuova” (es. PULL).</div>');
 };
+document.addEventListener('click', async e => {
+  const t = e.target.closest('[data-a="altw"],[data-a="altswap"],[data-a="schedb"]'); if (!t) return; const a = t.dataset.a;
+  if (a === 'altw') {
+    if (S.cfg.alt && S.cfg.alt.on) { if (!(await ask('Disattivare le settimane alterne? Resterà sempre la scheda della settimana A.', 'Disattiva'))) return; S.cfg.alt.on = false; }
+    else { S.cfg.alt = { on: true, anchor: wkStart(today()) }; S.cfg.schedB = Object.assign({}, S.sched); }
+    await persist('cfg'); render();
+  } else if (a === 'altswap') { S.cfg.alt.anchor = addDays(S.cfg.alt.anchor, 7); await persist('cfg'); render(); }
+  else { const B = S.cfg.schedB = S.cfg.schedB || {}; if (B[t.dataset.w] === t.dataset.n) delete B[t.dataset.w]; else B[t.dataset.w] = t.dataset.n; await persist('cfg'); render(); }
+});
 const DND = { on: false, just: 0, row: null, cont: null, pid: -1 };
 document.addEventListener('pointerdown', e => {
   const h = e.target.closest('.dh'); if (!h) return; const row = h.closest('[data-dnd]'); if (!row) return;
@@ -2642,7 +2694,10 @@ const PACE0 = { 'swimming': 25, 'cycling': 2.7, 'stationary-bike': 2.7, 'running
 const PACEN = { 'swimming': 'Nuoto', 'cycling': 'Ciclismo', 'stationary-bike': 'Cyclette', 'running-outdoor': 'Corsa', 'running-treadmill': 'Tapis roulant', 'rowing-machine': 'Vogatore', 'elliptical-trainer': 'Ellittica', 'walking': 'Camminata' };
 const paceOf = id => ((S.cfg.pace || {})[id]) > 0 ? S.cfg.pace[id] : (PACE0[id] || 6);
 const entryMin = x => x.min > 0 ? x.min : (x.km > 0 ? x.km * paceOf(x.ex) : 0);
-const CAPS = 6; /* massimo di serie equivalenti per attività al giorno */
+const capOf = () => S.cfg.cardioCap == null ? 0 : S.cfg.cardioCap; /* massimo di serie equivalenti per attività al giorno (0 = nessun tetto, come consigliato dalla verifica) */
+/* MET di partenza (Compendium of Physical Activities 2024), modificabili: sono valori per un'intensità tipica, non per la tua */
+const MET0 = { 'swimming': 5.8, 'cycling': 8.0, 'stationary-bike': 5.8, 'running-outdoor': 9.3, 'running-treadmill': 9.3, 'rowing-machine': 5.0, 'elliptical-trainer': 5.0, 'walking': 4.8 };
+const metOf = id => ((S.cfg.met || {})[id]) > 0 ? S.cfg.met[id] : (MET0[id] || 5);
 let CCK = '', CCM = {};
 function dayTot(x) {
   if (!CCM.__ok) { CCM = { __ok: 1 }; S.sets.forEach(s => { if (s.min != null || s.km > 0) { const k = s.date + '|' + s.ex; CCM[k] = (CCM[k] || 0) + entryMin(s); } }); }
@@ -2652,8 +2707,21 @@ G.cardioCounts = x => dayTot(x) >= cardioMin();
 /* serie equivalenti di una voce cardio: il tetto vale per l'intera giornata e attività, non per la singola voce */
 G.cardioEq = function (x, e) {
   const f = eqOf(e), t = dayTot(x); if (!(t > 0) || t < cardioMin()) return 0;
-  const k = Math.min(1, CAPS / (t * f));
+  const k = capOf() > 0 ? Math.min(1, capOf() / (t * f)) : 1;
   return entryMin(x) * f * k;
+};
+G.cardioWeekCard = function () {
+  const n = UI.period || 1, a = addDays(UI.wk, -7 * (n - 1)), z = addDays(UI.wk, 6), by = {}; let mm = 0, mins = 0, kcal = 0, ign = 0; const kg = typeof bw === 'function' ? bw() : 0;
+  const seen = {};
+  S.sets.forEach(x => {
+    if (x.wu || x.date < a || x.date > z) return; const e = getEx(x.ex); if (!e || e.type !== 'cardio') return;
+    const t = entryMin(x); if (!(t > 0)) return; const mt = metOf(x.ex), o = by[x.ex] = by[x.ex] || { min: 0, met: 0 };
+    o.min += t; o.met += t * mt; mm += t * mt; mins += t; if (kg) kcal += mt * kg * t / 60;
+    const k = x.date + '|' + x.ex; if (!seen[k]) { seen[k] = 1; if (dayTot(x) < cardioMin()) ign++; }
+  });
+  const ids = Object.keys(by); if (!ids.length) return '';
+  const per = n > 1 ? ' <small class="mut">(totale su ' + n + ' sett.)</small>' : '';
+  return `<div class="card"><b>🏃 Cardio della settimana</b>${per}<div class="setrow"><span>Minuti</span><span>${fmtN(mins)}</span></div><div class="setrow"><span>MET·minuti</span><span>${fmtN(mm)}</span></div>${kg ? `<div class="setrow"><span>Energia stimata</span><span>≈ ${fmtN(kcal)} kcal</span></div>` : ''}${ids.map(id => `<div class="setrow"><span>${esc(exName(id))}</span><span>${fmtN(by[id].min)} min · ${fmtN(by[id].met)} MET·min</span></div>`).join('')}<small class="mut" style="display:block;margin-top:6px">MET·minuti = minuti × MET dell'attività (valori del Compendium 2024, modificabili in Altro). L'OMS indica 150–300 min a settimana di attività moderata (3–6 MET) o 75–150 di vigorosa. Energia ≈ MET × kg × ore, solo una stima.${ign ? ` ${ign} attività sotto i ${cardioMin()} min non contano come allenamento per i muscoli e il calendario, ma qui sono incluse.` : ''}</small></div>`;
 };
 const p15 = persist;
 persist = async function (k) { if (k === 'sets' || k === 'cfg') { CCK += 'x'; if (CCK.length > 50) CCK = ''; CCM = {}; } return p15(k); };
@@ -2669,11 +2737,11 @@ G.dayMap = function (sel) {
 };
 const vm15 = viewMore;
 G.viewMore = function () {
-  return vm15().replace('<details class="card" id="adv"', `<div class="card"><b>Cardio: durata minima</b><p class="mut small">Sotto questa durata (minuti totali del giorno per quell'attività) il cardio non conta come allenamento: non colora i muscoli né il calendario. Utile per riscaldamenti brevi.</p><label class="lbl">Minuti minimi</label><input class="txt" id="c_cm" inputmode="numeric" value="${cardioMin()}"><p class="mut small">Il tetto di 6 serie equivalenti vale per l'intera giornata di ogni attività (due voci da 1 h non contano il doppio di una da 2 h). Se inserisci solo i km, i minuti si ricavano da questi ritmi (minuti per km):</p>${Object.keys(PACEN).map(k => `<div class="setrow"><span>${PACEN[k]}</span><span><input class="txt lim" id="pc_${k}" inputmode="decimal" value="${paceOf(k)}"> min/km</span></div>`).join('')}<button class="btn" data-a="savecm">Salva</button></div><details class="card" id="adv"`);
+  return vm15().replace('<details class="card" id="adv"', `<div class="card"><b>Cardio: durata minima</b><p class="mut small">Sotto questa durata (minuti totali del giorno per quell'attività) il cardio non conta come allenamento: non colora i muscoli né il calendario. Utile per riscaldamenti brevi.</p><label class="lbl">Minuti minimi</label><input class="txt" id="c_cm" inputmode="numeric" value="${cardioMin()}"><p class="mut small">Il contributo del cardio ai muscoli è un'<b>euristica</b> (nessuno studio converte minuti di cardio in serie di forza): serve solo per colorare i muscoli. Il carico vero del cardio è nella scheda "Cardio della settimana" (Statistiche), in MET·minuti.</p><label class="lbl">Tetto di serie equivalenti per attività al giorno (0 = nessun tetto)</label><input class="txt" id="c_cap" inputmode="numeric" value="${capOf()}"><p class="mut small">Se inserisci solo i km, i minuti si ricavano da questi ritmi (convenzione, minuti per km), e il MET è il valore di partenza del Compendium per un'intensità tipica (cambialo se vai più forte o più piano):</p>${Object.keys(PACEN).map(k => `<div class="setrow"><span>${PACEN[k]}</span><span><input class="txt lim" id="pc_${k}" inputmode="decimal" value="${paceOf(k)}"> min/km · <input class="txt lim" id="mt_${k}" inputmode="decimal" value="${metOf(k)}"> MET</span></div>`).join('')}<button class="btn" data-a="savecm">Salva</button></div><details class="card" id="adv"`);
 };
 document.addEventListener('click', async e => {
   const t = e.target.closest('[data-a="savecm"]'); if (!t) return;
-  const v = parseInt($('#c_cm').value); S.cfg.cardioMin = v >= 0 ? v : 10; S.cfg.pace = S.cfg.pace || {}; Object.keys(PACEN).forEach(k => { const el = $('#pc_' + k), p = el ? parseFloat(String(el.value).replace(',', '.')) : 0; if (p > 0) S.cfg.pace[k] = p; }); await persist('cfg'); toast('Salvato'); render();
+  const v = parseInt($('#c_cm').value); S.cfg.cardioMin = v >= 0 ? v : 10; const cp = parseInt($('#c_cap').value); S.cfg.cardioCap = cp >= 0 ? cp : 0; S.cfg.met = S.cfg.met || {}; S.cfg.pace = S.cfg.pace || {}; Object.keys(PACEN).forEach(k => { const el = $('#pc_' + k), p = el ? parseFloat(String(el.value).replace(',', '.')) : 0; if (p > 0) S.cfg.pace[k] = p; const e2 = $('#mt_' + k), mv = e2 ? parseFloat(String(e2.value).replace(',', '.')) : 0; if (mv > 0) S.cfg.met[k] = mv; }); await persist('cfg'); toast('Salvato'); render();
 });
 
 /* addominali: disegno più naturale */
@@ -2688,8 +2756,8 @@ document.addEventListener('click', async e => {
     { n: 'Trasverso (profondo)', d: 'M129 112Q150 122 150 152Q150 184 134 206L129 204Z', m: ['add'], re: RX(/plank|vacuum|rollout|crunch/i) },
     { n: 'Obliqui', d: 'M131 62Q160 80 160 124Q156 168 142 204L133 198Q139 146 131 62Z', m: ['obl'], re: RX(/side|oblique|twist|rotation|crunch|woodchop|plank/i) },
     { n: 'Dentato anteriore', d: f1(138, 44, 158, 54, 4.5) + f1(142, 60, 162, 70, 4.5) + f1(145, 76, 164, 86, 4.5), m: ['obl'], re: RX(/push|press|dip|rollout|plank/i) },
-    { n: 'Retto superiore', d: rr(103, 52, 25, 22, 7) + rr(103, 78, 25, 22, 7) + rr(103, 104, 24, 22, 7), m: ['add'], re: RX(/crunch|sit|rollout|plank/i) },
-    { n: 'Retto inferiore', d: rr(103, 136, 23, 24, 7) + rr(103, 164, 21, 28, 8), m: ['add'], re: RX(/leg raise|knee raise|dragon|hanging|decline/i) }
+    { n: 'Retto dell\'addome (porzione superiore)', d: rr(103, 52, 25, 22, 7) + rr(103, 78, 25, 22, 7) + rr(103, 104, 24, 22, 7), m: ['add'], re: RX(/crunch|sit|rollout|plank/i) },
+    { n: 'Retto dell\'addome (porzione inferiore)', d: rr(103, 136, 23, 24, 7) + rr(103, 164, 21, 28, 8), m: ['add'], re: RX(/leg raise|knee raise|dragon|hanging|decline/i) }
   ];
 }
 
@@ -2810,6 +2878,10 @@ function legendify() {
   });
 }
 document.addEventListener('click', e => { const b = e.target.closest('[data-lgb]'); if (!b) return; const el = b.nextElementSibling; if (el) el.hidden = !el.hidden; });
+/* ---------- statistiche: cardio a parte; tricipiti: zoom non selettivo ---------- */
+const vs5 = viewStats;
+G.viewStats = function () { const h = vs5(); return (UI.sTab || 'w') === 'w' && G.cardioWeekCard ? h + G.cardioWeekCard() : h; };
+try { ANAT.tri.subs.forEach(s => { s.re = () => true; }); SUBS.tri.subs.forEach(s => { s[3] = () => true; }); } catch (e) { console.error(e); }
 /* ---------- dopo ogni render ---------- */
 const rn5 = render;
 G.render = function () {
@@ -2821,5 +2893,62 @@ G.render = function () {
   } catch (e) { console.error(e); }
 };
 new MutationObserver(() => { clearTimeout(G._mo5); G._mo5 = setTimeout(() => { try { legendify(); trimChips(); } catch (_) { } }, 30); }).observe(document.body, { childList: true, subtree: true });
+})();
+/* ===== v17: stretching (attrezzi, lato opposto automatico), impostazioni ===== */
+(function () {
+'use strict';
+const G = window;
+const TOOLK = new Set(['chest-and-front-of-shoulder-stretch', 'chair-lower-back-stretch', 'chair-upper-body-stretch', 'quad-stretch', 'standing-elevated-quad-stretch', 'standing-hamstring-and-calf-stretch', 'hamstring-stretch', 'standing-gastrocnemius-calf-stretch', 'seated-calf-stretch']);
+const opt = () => S.cfg.stOpt || {};
+G.stretchPlan = function (d) {
+  const ld = {};
+  S.sets.filter(x => x.date === d && !x.wu).forEach(x => {
+    const e = getEx(x.ex); if (!e) return; const f = eqf(x, e);
+    (e.p || []).forEach(m => { const k = DBM[m]; if (k) ld[k] = (ld[k] || 0) + f; });
+    (e.s || []).forEach(m => { const k = DBM[m]; if (k && !(e.p || []).includes(m)) ld[k] = (ld[k] || 0) + .5 * f; });
+  });
+  const ks = Object.entries(ld).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]).slice(0, 6), used = new Set(), items = [];
+  ks.forEach(([k, n]) => {
+    const hold = n >= 8 ? [30, 2] : n >= 4 ? [25, 2] : [30, 1]; let c = 0;
+    (STRD2[k] || []).forEach(s => { if (c >= 2 || used.has(s.k) || (!opt().tools && TOOLK.has(s.k))) return; used.add(s.k); c++; items.push({ g: k, n: s.n, i: s.i, sec: hold[0], rounds: hold[1] }); });
+  });
+  const legs = ['quadriceps', 'hamstrings', 'glutes', 'calves', 'adductors'].reduce((a, k) => a + (ld[k] || 0), 0);
+  if (legs >= 4) items.push({ g: 'walk', n: 'Camminata leggera (defaticamento)', i: [], sec: 300, rounds: 1, walk: 1 });
+  return { items };
+};
+G.stTick = function () {
+  if (!ST.run) return; ST.left--;
+  if (ST.left <= 0) {
+    const s = ST.items[ST.i]; stBeep(); if (navigator.vibrate) try { navigator.vibrate([200, 100, 200]); } catch (_) { }
+    if (ST.r < s.rounds) { ST.r++; ST.left = s.sec; if (!opt().auto) { ST.run = false; clearInterval(ST.iv); } }
+    else { ST.left = 0; ST.done = true; ST.run = false; clearInterval(ST.iv); }
+  }
+  stRender();
+};
+const vm6 = viewMore;
+G.viewMore = function () {
+  const o = opt();
+  return vm6().replace('<details class="card" id="adv"', `<div class="card"><b>Stretching</b><div class="chips"><button class="chip ${o.auto ? 'p' : ''}" data-a="stopt" data-k="auto">${o.auto ? '✓ ' : ''}Passa subito all'altro lato</button><button class="chip ${o.tools ? 'p' : ''}" data-a="stopt" data-k="tools">${o.tools ? '✓ ' : ''}Includi esercizi con attrezzi</button></div><small class="mut">Con il primo, quando finisce un lato parte subito l'altro (con un suono) senza aspettare il tocco. Il secondo aggiunge gli allungamenti che richiedono elastico, bastone, sedia o step: di default sono esclusi.</small></div><details class="card" id="adv"`);
+};
+document.addEventListener('click', async e => {
+  const t = e.target.closest('[data-a="stopt"]'); if (!t) return; const k = t.dataset.k;
+  S.cfg.stOpt = Object.assign({}, S.cfg.stOpt || {}, { [k]: !(S.cfg.stOpt || {})[k] }); await persist('cfg'); render();
+});
+})();
+
+/* v18: feedback leggero (transizione tra schermate, "bump" sui +/-) */
+(function () {
+  const G = window; let lastK = null, tmr = 0;
+  const key = () => UI.view + '|' + (UI.view === 'ex' ? UI.exId + '|' + UI.tab : '') + (UI.view === 'stats' ? '|' + (UI.sTab || 'w') : '') + (UI.view === 'plans' ? '' : '');
+  const r0 = G.render;
+  G.render = function () {
+    const k = key(), ch = lastK !== null && k !== lastK; lastK = k;
+    r0();
+    if (ch) { const a = document.getElementById('app'); if (a) { a.classList.add('pg'); clearTimeout(tmr); tmr = setTimeout(() => a.classList.remove('pg'), 220); } }
+  };
+  document.addEventListener('click', e => {
+    const b = e.target.closest && e.target.closest('[data-a="st"]'); if (!b) return;
+    const f = b.dataset.f; setTimeout(() => { const i = document.getElementById(f); if (i) { i.classList.remove('bump'); void i.offsetWidth; i.classList.add('bump'); } }, 0);
+  }, true);
 })();
 </script>

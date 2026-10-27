@@ -104,3 +104,13 @@ I file modificati rispetto alla versione precedente sono solo `public/index.html
 - Elenco esercizi: categorie in ordine fisso dall'alto in basso; la riga resta scorsa dove l'hai lasciata.
 - Attrezzo: scheda sottile in Registra; "serie passate" riscritta in 3 passaggi con ricerca e anteprima.
 - Cache `palestra-v6`.
+
+## Aggiornamento: correzioni dalla verifica ad alto impegno
+- Cardio: scheda "Cardio della settimana" (Statistiche) con minuti, MET·minuti ed energia stimata; MET e ritmi min/km modificabili in Altro; tetto giornaliero disattivato di default (0 = nessun tetto); il contributo ai muscoli è dichiarato euristica.
+- Testi: presa in panca 1–1,5× le spalle, leg extension reclinata, cadenza +5–10%, sella (ginocchio 25–35°), rotazione nelle alzate laterali, leg press (parziali in allungamento), retto dell'addome "porzione superiore/inferiore", zoom tricipiti non selettivo.
+
+## Aggiornamento: stretching, settimane alterne, peso corporeo
+- Riordino: frecce e ✕ non si sovrappongono più.
+- Stretching: conta solo le serie registrate (non i grigi); gli esercizi che richiedono attrezzi sono nascosti (Altro → Stretching per includerli). Opzione "passa subito al lato successivo".
+- Schede → "Settimane alterne": scheda A/B, con "Scambia A/B questa settimana".
+- Peso corporeo: automatico per trazioni/dip; chip "peso corporeo" su qualsiasi esercizio (plank, flessioni…).
